@@ -727,6 +727,45 @@ rota('GET', '/lancamentos/:id', async ({ usuario, params }) => {
   };
 });
 
+rota('PUT', '/lancamentos/:id', async ({ req, usuario, params }) => {
+  const lancamentoId = idDaRota(params.id);
+  const d = await lerJson(req);
+  const resposta = await transacao(async (c) => {
+    const { rows: [atual] } = await c.query('SELECT * FROM lancamentos WHERE id = $1 FOR UPDATE', [lancamentoId]);
+    if (!atual) throw new HttpError(404, 'Lançamento não encontrado');
+    const projeto = await exigirPermissao(usuario, atual.projeto_id, 'lancar', c);
+    // Controle de concorrência: o app envia o atualizadoEm que conhece.
+    if (d.atualizadoEm && d.atualizadoEm !== iso(atual.atualizado_em)) {
+      throw new HttpError(409, 'Este lançamento foi alterado por outra pessoa. Recarregue e tente novamente.');
+    }
+    const antes = {
+      tipo: atual.tipo, data: atual.data, descricao: atual.descricao, rubricaId: atual.rubrica_id,
+      quantidade: atual.quantidade, valorUnitario: atual.valor_unitario, situacao: atual.situacao, valorTotal: atual.valor_total,
+    };
+    const campos = ['tipo', 'data', 'descricao', 'rubricaId', 'quantidade', 'valorUnitario', 'situacao'];
+    const novo = { ...antes };
+    for (const campo of campos) if (d[campo] !== undefined) novo[campo] = d[campo];
+    if (typeof novo.descricao === 'string') novo.descricao = novo.descricao.trim();
+    await validarLancamento(c, novo, projeto);
+    novo.valorTotal = arredondar(Math.round(novo.quantidade * 1000) / 1000 * Math.round(novo.valorUnitario * 100) / 100);
+    const alteracoes = diferencas(antes, novo, [...campos, 'valorTotal']);
+    if (alteracoes.length) {
+      await c.query(
+        `UPDATE lancamentos SET tipo = $2, data = $3, descricao = $4, rubrica_id = $5, quantidade = $6, valor_unitario = $7,
+                valor_total = ROUND(ROUND($6::numeric, 3) * ROUND($7::numeric, 2), 2), situacao = $8, atualizado_por = $9, atualizado_em = $10
+          WHERE id = $1`,
+        [lancamentoId, novo.tipo, novo.data, novo.descricao, novo.rubricaId, novo.quantidade, novo.valorUnitario, novo.situacao, usuario.id, new Date()],
+      );
+      const acao = alteracoes.some((a) => a.campo === 'situacao' && a.para === 'CANCELADO') ? 'CANCELAMENTO' : 'ALTERACAO';
+      await registrarHistorico(c, atual.projeto_id, 'lancamento', lancamentoId, acao, usuario, alteracoes);
+    }
+    const lancamento = await buscarLancamento(lancamentoId, c);
+    const resumo = lancamento.rubrica_id ? await resumoRubrica(lancamento.rubrica_id, c) : null;
+    return { ...lancamentoParaResposta(lancamento), alertaRubrica: resumo ? resumo.alerta : null };
+  });
+  return { status: 200, corpo: resposta };
+});
+
 // ------------------------------------------------------------------ servidor
 
 const ROTAS_PUBLICAS = new Set([`${PREFIXO}/status`, `${PREFIXO}/auth/login`]);
