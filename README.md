@@ -103,3 +103,15 @@ O build release só aceita **HTTPS** (`network_security_config`) e usa `apiUrlRe
 | GP-10 | Alertas de rubrica | ✅ App + API |
 
 Detalhes e critérios de aceite em [docs/requisitos.md](docs/requisitos.md). O que falta, e em que ordem, está em [docs/gaps-e-plano.md](docs/gaps-e-plano.md).
+
+## Documentação
+
+- [Requisitos e critérios de aceite](docs/requisitos.md)
+- [**Gaps e plano de implementação**](docs/gaps-e-plano.md) (o que falta e em que ordem)
+- [Arquitetura](docs/arquitetura.md)
+- [Telas e fluxos de navegação](docs/telas-e-fluxos.md)
+- [Endpoints consumidos](docs/api-endpoints.md)
+- [Servidor próprio: banco + API em produção](docs/servidor-proprio.md)
+- [Perfis de acesso e permissões do dispositivo](docs/permissoes.md)
+- [Plano de testes](docs/testes.md)
+- [Decisões pendentes](docs/decisoes.md)
