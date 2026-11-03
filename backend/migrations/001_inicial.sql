@@ -22,3 +22,11 @@ CREATE TABLE projetos (
     orcamento_aprovado NUMERIC(14,2) NOT NULL CHECK (orcamento_aprovado > 0),
     CHECK (vigencia_fim >= vigencia_inicio)
 );
+
+-- Papel do usuário em cada projeto (GP-01).
+CREATE TABLE membros (
+    usuario_id INT  NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    projeto_id INT  NOT NULL REFERENCES projetos(id) ON DELETE CASCADE,
+    papel      TEXT NOT NULL CHECK (papel IN ('coordenador', 'gestor', 'consulta')),
+    PRIMARY KEY (usuario_id, projeto_id)
+);
