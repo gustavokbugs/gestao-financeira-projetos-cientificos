@@ -228,6 +228,11 @@ rota('POST', '/auth/login', async ({ req }) => {
   };
 });
 
+rota('GET', '/auth/me', async ({ usuario }) => ({
+  status: 200,
+  corpo: { id: usuario.id, nome: usuario.nome, email: usuario.email, podeCriarProjetos: usuario.pode_criar_projetos },
+}));
+
 // ------------------------------------------------------------------ servidor
 
 const ROTAS_PUBLICAS = new Set([`${PREFIXO}/status`, `${PREFIXO}/auth/login`]);
