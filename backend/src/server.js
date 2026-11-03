@@ -445,6 +445,38 @@ rota('GET', '/projetos/:id', async ({ usuario, params }) => {
   return { status: 200, corpo: projetoParaResposta(projeto) };
 });
 
+rota('PUT', '/projetos/:id', async ({ req, usuario, params }) => {
+  const projetoId = idDaRota(params.id);
+  const d = await lerJson(req);
+  const atualizado = await transacao(async (c) => {
+    const projeto = await exigirPermissao(usuario, projetoId, 'gerenciar', c);
+    const antes = projetoParaResposta(projeto);
+    const campos = ['titulo', 'descricao', 'vigenciaInicio', 'vigenciaFim', 'fonteRecursos', 'responsaveis', 'orcamentoAprovado'];
+    const novo = { ...antes };
+    for (const campo of campos) if (d[campo] !== undefined) novo[campo] = d[campo];
+    validarProjeto(novo);
+    const { rows: [soma] } = await c.query(
+      'SELECT COALESCE(SUM(orcamento), 0) AS total FROM rubricas WHERE projeto_id = $1 AND rubrica_pai_id IS NULL',
+      [projetoId],
+    );
+    if (novo.orcamentoAprovado + 1e-9 < soma.total) {
+      throw new HttpError(422, 'Dados do projeto inválidos', [
+        { campo: 'orcamentoAprovado', mensagem: `O orçamento não pode ser menor que a soma das rubricas (${brl(soma.total)})` },
+      ]);
+    }
+    const { rows: [p] } = await c.query(
+      `UPDATE projetos SET titulo = $2, descricao = $3, vigencia_inicio = $4, vigencia_fim = $5, fonte_recursos = $6,
+              responsaveis = $7, orcamento_aprovado = $8 WHERE id = $1 RETURNING *`,
+      [projetoId, novo.titulo.trim(), String(novo.descricao ?? ''), novo.vigenciaInicio, novo.vigenciaFim, novo.fonteRecursos.trim(),
+        JSON.stringify(novo.responsaveis), novo.orcamentoAprovado],
+    );
+    const alteracoes = diferencas(antes, novo, campos);
+    if (alteracoes.length) await registrarHistorico(c, projetoId, 'projeto', projetoId, 'ALTERACAO', usuario, alteracoes);
+    return { ...p, papel: projeto.papel };
+  });
+  return { status: 200, corpo: projetoParaResposta(atualizado) };
+});
+
 // ------------------------------------------------------------------ servidor
 
 const ROTAS_PUBLICAS = new Set([`${PREFIXO}/status`, `${PREFIXO}/auth/login`]);
