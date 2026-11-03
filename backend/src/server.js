@@ -808,6 +808,16 @@ rota('GET', '/comprovantes/:id', async ({ usuario, params }) => {
   return { arquivo: { conteudo: c.conteudo, tipo: c.tipo, nome: c.nome_arquivo } };
 });
 
+rota('GET', '/projetos/:id/historico', async ({ usuario, params }) => {
+  const projeto = await exigirPermissao(usuario, idDaRota(params.id), 'ler');
+  const { rows } = await query(
+    `SELECT h.*, u.nome AS usuario_nome FROM historico h JOIN usuarios u ON u.id = h.usuario_id
+      WHERE h.projeto_id = $1 ORDER BY h.data DESC, h.id DESC LIMIT 500`,
+    [projeto.id],
+  );
+  return { status: 200, corpo: rows.map(historicoParaResposta) };
+});
+
 // ------------------------------------------------------------------ servidor
 
 const ROTAS_PUBLICAS = new Set([`${PREFIXO}/status`, `${PREFIXO}/auth/login`]);
