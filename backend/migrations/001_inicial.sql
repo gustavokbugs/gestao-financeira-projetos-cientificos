@@ -9,3 +9,16 @@ CREATE TABLE usuarios (
     pode_criar_projetos BOOLEAN     NOT NULL DEFAULT FALSE,
     criado_em           TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+CREATE TABLE projetos (
+    id                 SERIAL PRIMARY KEY,
+    codigo             TEXT          NOT NULL UNIQUE,
+    titulo             TEXT          NOT NULL,
+    descricao          TEXT          NOT NULL DEFAULT '',
+    vigencia_inicio    DATE          NOT NULL,
+    vigencia_fim       DATE          NOT NULL,
+    fonte_recursos     TEXT          NOT NULL,
+    responsaveis       JSONB         NOT NULL DEFAULT '[]',
+    orcamento_aprovado NUMERIC(14,2) NOT NULL CHECK (orcamento_aprovado > 0),
+    CHECK (vigencia_fim >= vigencia_inicio)
+);
