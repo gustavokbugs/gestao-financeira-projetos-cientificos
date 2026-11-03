@@ -766,6 +766,38 @@ rota('PUT', '/lancamentos/:id', async ({ req, usuario, params }) => {
   return { status: 200, corpo: resposta };
 });
 
+// Upload do comprovante como corpo binário (sem multipart):
+//   Content-Type: image/jpeg | image/png | application/pdf
+//   X-Nome-Arquivo: nome original, codificado com encodeURIComponent
+rota('POST', '/lancamentos/:id/comprovantes', async ({ req, usuario, params }) => {
+  const lancamentoId = idDaRota(params.id);
+  const { rows: [lancamento] } = await query('SELECT id, projeto_id FROM lancamentos WHERE id = $1', [lancamentoId]);
+  if (!lancamento) throw new HttpError(404, 'Lançamento não encontrado');
+  await exigirPermissao(usuario, lancamento.projeto_id, 'lancar');
+  const tipo = (req.headers['content-type'] || '').split(';')[0].trim();
+  if (!TIPOS_COMPROVANTE.has(tipo)) throw new HttpError(415, 'Envie o comprovante como JPEG, PNG ou PDF');
+  const conteudo = await lerCorpo(req, TAMANHO_MAX_COMPROVANTE);
+  if (!conteudo.length) throw new HttpError(422, 'Arquivo vazio');
+  let nome = 'comprovante';
+  try {
+    nome = decodeURIComponent(req.headers['x-nome-arquivo'] || nome);
+  } catch {
+    // mantém o nome padrão
+  }
+  nome = nome.split(/[\\/]/).pop().slice(0, 120) || 'comprovante';
+
+  const comprovante = await transacao(async (c) => {
+    const { rows: [novo] } = await c.query(
+      `INSERT INTO comprovantes (lancamento_id, nome_arquivo, tipo, tamanho, conteudo, enviado_por)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, lancamento_id, nome_arquivo, tipo, tamanho, enviado_por, enviado_em`,
+      [lancamentoId, nome, tipo, conteudo.length, conteudo, usuario.id],
+    );
+    await registrarHistorico(c, lancamento.projeto_id, 'lancamento', lancamentoId, 'ANEXO', usuario, [{ campo: 'comprovante', de: null, para: nome }]);
+    return { ...novo, enviado_por_nome: usuario.nome };
+  });
+  return { status: 201, corpo: comprovanteParaResposta(comprovante) };
+});
+
 // ------------------------------------------------------------------ servidor
 
 const ROTAS_PUBLICAS = new Set([`${PREFIXO}/status`, `${PREFIXO}/auth/login`]);
