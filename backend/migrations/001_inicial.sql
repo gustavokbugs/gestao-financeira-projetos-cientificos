@@ -61,3 +61,16 @@ CREATE TABLE lancamentos (
 );
 CREATE INDEX lancamentos_projeto_data ON lancamentos (projeto_id, data DESC);
 CREATE INDEX lancamentos_rubrica ON lancamentos (rubrica_id);
+
+-- Comprovantes guardados no próprio banco (BYTEA, até 10 MB cada): dispensa um serviço de arquivos à parte.
+CREATE TABLE comprovantes (
+    id            SERIAL PRIMARY KEY,
+    lancamento_id INT         NOT NULL REFERENCES lancamentos(id) ON DELETE CASCADE,
+    nome_arquivo  TEXT        NOT NULL,
+    tipo          TEXT        NOT NULL,
+    tamanho       INT         NOT NULL,
+    conteudo      BYTEA       NOT NULL,
+    enviado_por   INT         NOT NULL REFERENCES usuarios(id),
+    enviado_em    TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX comprovantes_lancamento ON comprovantes (lancamento_id);
