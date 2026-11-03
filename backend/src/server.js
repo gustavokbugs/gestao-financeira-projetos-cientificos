@@ -270,6 +270,102 @@ async function buscarLancamento(id, c = { query }) {
   return rows[0] || null;
 }
 
+// ------------------------------------------------------- cálculos financeiros
+
+function calcularAlerta(orcamento, comprometido) {
+  if (orcamento <= 0) {
+    return comprometido > 0 ? { nivel: 'CRITICO', mensagem: 'Rubrica sem orçamento com despesas lançadas' } : null;
+  }
+  const percentual = (comprometido / orcamento) * 100;
+  if (percentual > REGRAS_ALERTA.criticoPercentual) {
+    return { nivel: 'CRITICO', mensagem: 'Saldo insuficiente: despesas acima do orçamento da rubrica' };
+  }
+  if (percentual >= REGRAS_ALERTA.atencaoPercentual) {
+    return { nivel: 'ATENCAO', mensagem: `Rubrica próxima do limite (${percentual.toFixed(1).replace('.', ',')}% comprometido)` };
+  }
+  return null;
+}
+
+// Executado e previsto de cada rubrica; a rubrica principal soma também as subrubricas.
+const SELECT_RESUMO_RUBRICAS = `
+  SELECT r.id, r.nome, r.rubrica_pai_id, r.orcamento,
+         COALESCE(SUM(l.valor_total) FILTER (WHERE l.situacao = 'REALIZADO'), 0) AS executado,
+         COALESCE(SUM(l.valor_total) FILTER (WHERE l.situacao = 'PREVISTO'), 0) AS previsto
+    FROM rubricas r
+    LEFT JOIN lancamentos l
+           ON l.tipo = 'DESPESA'
+          AND (l.rubrica_id = r.id OR l.rubrica_id IN (SELECT s.id FROM rubricas s WHERE s.rubrica_pai_id = r.id))
+   WHERE %FILTRO%
+   GROUP BY r.id
+   ORDER BY r.id`;
+
+function resumoDeLinha(r) {
+  const comprometido = arredondar(r.executado + r.previsto);
+  return {
+    id: r.id,
+    nome: r.nome,
+    rubricaPaiId: r.rubrica_pai_id,
+    orcamento: r.orcamento,
+    executado: r.executado,
+    previsto: r.previsto,
+    saldo: arredondar(r.orcamento - comprometido),
+    percentualComprometido: r.orcamento > 0 ? arredondar((comprometido / r.orcamento) * 100) : null,
+    alerta: calcularAlerta(r.orcamento, comprometido),
+  };
+}
+
+async function resumoRubrica(rubricaId, c = { query }) {
+  const { rows } = await c.query(SELECT_RESUMO_RUBRICAS.replace('%FILTRO%', 'r.id = $1'), [rubricaId]);
+  return rows[0] ? resumoDeLinha(rows[0]) : null;
+}
+
+async function rubricasDoProjeto(projetoId) {
+  const { rows } = await query(SELECT_RESUMO_RUBRICAS.replace('%FILTRO%', 'r.projeto_id = $1'), [projetoId]);
+  const todas = rows.map(resumoDeLinha);
+  return todas
+    .filter((r) => r.rubricaPaiId === null)
+    .map((pai) => ({ ...pai, subrubricas: todas.filter((r) => r.rubricaPaiId === pai.id) }));
+}
+
+async function dashboard(projeto) {
+  const { rows } = await query(
+    `SELECT tipo, COALESCE(SUM(valor_total), 0) AS total FROM lancamentos
+      WHERE projeto_id = $1 AND situacao = 'REALIZADO' GROUP BY tipo`,
+    [projeto.id],
+  );
+  const total = (tipo) => (rows.find((r) => r.tipo === tipo) || { total: 0 }).total;
+  const receitaTotal = total('RECEITA');
+  const despesaTotal = total('DESPESA');
+  const rubricas = await rubricasDoProjeto(projeto.id);
+
+  const alertas = [];
+  for (const r of rubricas) {
+    for (const item of [r, ...r.subrubricas]) {
+      if (item.alerta) alertas.push({ rubricaId: item.id, rubrica: item.nome, ...item.alerta });
+    }
+  }
+
+  return {
+    projetoId: projeto.id,
+    receitaTotal,
+    despesaTotal,
+    saldoDisponivel: arredondar(receitaTotal - despesaTotal),
+    orcamentoPrevisto: projeto.orcamento_aprovado,
+    orcamentoExecutado: despesaTotal,
+    percentualExecutado: projeto.orcamento_aprovado > 0 ? arredondar((despesaTotal / projeto.orcamento_aprovado) * 100) : null,
+    participacaoPorRubrica: rubricas.map((r) => ({
+      rubricaId: r.id,
+      rubrica: r.nome,
+      valor: r.executado,
+      percentual: despesaTotal > 0 ? arredondar((r.executado / despesaTotal) * 100) : 0,
+    })),
+    rubricas,
+    alertas,
+    regrasAlerta: REGRAS_ALERTA,
+    atualizadoEm: new Date().toISOString(),
+  };
+}
+
 // ------------------------------------------------------------------ histórico
 
 async function registrarHistorico(c, projetoId, entidade, entidadeId, acao, usuario, alteracoes = []) {
