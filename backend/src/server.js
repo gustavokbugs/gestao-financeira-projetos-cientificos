@@ -583,6 +583,22 @@ rota('GET', '/projetos/:id/rubricas', async ({ usuario, params }) => {
   return { status: 200, corpo: await rubricasDoProjeto(projeto.id) };
 });
 
+rota('POST', '/projetos/:id/rubricas', async ({ req, usuario, params }) => {
+  const projetoId = idDaRota(params.id);
+  const d = await lerJson(req);
+  const resumo = await transacao(async (c) => {
+    const projeto = await exigirPermissao(usuario, projetoId, 'gerenciar', c);
+    const pai = await validarRubrica(c, d, projeto);
+    const { rows: [r] } = await c.query(
+      'INSERT INTO rubricas (projeto_id, nome, rubrica_pai_id, orcamento) VALUES ($1, $2, $3, $4) RETURNING id',
+      [projetoId, d.nome.trim(), pai ? pai.id : null, d.orcamento],
+    );
+    await registrarHistorico(c, projetoId, 'rubrica', r.id, 'CRIACAO', usuario);
+    return resumoRubrica(r.id, c);
+  });
+  return { status: 201, corpo: resumo };
+});
+
 // ------------------------------------------------------------------ servidor
 
 const ROTAS_PUBLICAS = new Set([`${PREFIXO}/status`, `${PREFIXO}/auth/login`]);
