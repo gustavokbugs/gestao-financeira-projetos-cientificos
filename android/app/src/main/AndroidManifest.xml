@@ -11,5 +11,10 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
         android:theme="@style/Theme.GestaoFinanceira">
+
+        <activity
+            android:name=".ui.dashboard.DashboardActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.projetos.ProjetosActivity" />
     </application>
 </manifest>
