@@ -705,6 +705,28 @@ rota('POST', '/projetos/:id/lancamentos', async ({ req, usuario, params }) => {
   return { status: 201, corpo: resposta };
 });
 
+rota('GET', '/lancamentos/:id', async ({ usuario, params }) => {
+  const lancamento = await buscarLancamento(idDaRota(params.id));
+  if (!lancamento) throw new HttpError(404, 'Lançamento não encontrado');
+  await exigirPermissao(usuario, lancamento.projeto_id, 'ler');
+  const [{ rows: comprovantes }, { rows: historico }] = await Promise.all([
+    query(
+      `SELECT c.id, c.lancamento_id, c.nome_arquivo, c.tipo, c.tamanho, c.enviado_por, c.enviado_em, u.nome AS enviado_por_nome
+         FROM comprovantes c JOIN usuarios u ON u.id = c.enviado_por WHERE c.lancamento_id = $1 ORDER BY c.id`,
+      [lancamento.id],
+    ),
+    query(
+      `SELECT h.*, u.nome AS usuario_nome FROM historico h JOIN usuarios u ON u.id = h.usuario_id
+        WHERE h.entidade = 'lancamento' AND h.entidade_id = $1 ORDER BY h.data, h.id`,
+      [lancamento.id],
+    ),
+  ]);
+  return {
+    status: 200,
+    corpo: { ...lancamentoParaResposta(lancamento), comprovantes: comprovantes.map(comprovanteParaResposta), historico: historico.map(historicoParaResposta) },
+  };
+});
+
 // ------------------------------------------------------------------ servidor
 
 const ROTAS_PUBLICAS = new Set([`${PREFIXO}/status`, `${PREFIXO}/auth/login`]);
