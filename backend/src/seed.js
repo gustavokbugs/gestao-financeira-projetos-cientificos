@@ -5,6 +5,8 @@
 // Projeto 1: planilha de orçamento do enunciado (docs/referencias/exemplo-planilha-orcamento.png).
 //   Os lançamentos exercitam os alertas do GP-10: Passagens estourada; Diárias e Material permanente perto do limite.
 // Projeto 2: sem o perfil gestor, para testar o controle de acesso por projeto.
+// Projeto 3: valores do painel financeiro do enunciado (docs/referencias/exemplo-painel-financeiro.png),
+//   para conferir o CA-01: receita 559.453,02 - despesas 96.078,83 = saldo 463.374,19.
 //
 // Uso: npm run seed   (ou SEED_DEMO=true ao iniciar a API)
 
@@ -36,11 +38,19 @@ const PROJETOS = [
     responsaveis: [{ nome: 'Coordenação Exemplo', funcao: 'Coordenador(a)' }],
     orcamentoAprovado: 12000,
   },
+  {
+    id: 3, codigo: 'PESQ-2026-003', titulo: 'Programa de Pesquisa Aplicada (painel de referência)',
+    descricao: 'Reproduz os valores do painel financeiro do enunciado (CA-01).',
+    vigenciaInicio: '2026-01-01', vigenciaFim: '2027-12-31', fonteRecursos: 'Convênio (exemplo)',
+    responsaveis: [{ nome: 'Coordenação Exemplo', funcao: 'Coordenador(a)' }],
+    orcamentoAprovado: 600000,
+  },
 ];
 
 const MEMBROS = [
   [1, 1, 'coordenador'], [2, 1, 'gestor'], [3, 1, 'consulta'],
   [1, 2, 'coordenador'], [3, 2, 'consulta'],
+  [1, 3, 'coordenador'], [3, 3, 'consulta'],
 ];
 
 // [id, projeto, nome, pai, orçamento]
@@ -54,6 +64,9 @@ const RUBRICAS = [
   [7, 1, 'Passagens aéreas', 2, 1800],
   [8, 2, 'Material de consumo', null, 4000],
   [9, 2, 'Serviços de terceiros', null, 8000],
+  [10, 3, 'Custo com pessoal', null, 50000],
+  [11, 3, 'Despesas operacionais', null, 150000],
+  [12, 3, 'Estágio', null, 12000],
 ];
 
 // [projeto, tipo, data, descrição, rubrica, quantidade, valor unitário, situação, autor]
@@ -72,6 +85,10 @@ const LANCAMENTOS = [
   [1, 'DESPESA', '2026-06-02', 'Monitor 24 polegadas', 5, 1, 1000, 'CANCELADO', 1],
   [2, 'RECEITA', '2026-01-15', 'Aporte institucional', null, 1, 12000, 'REALIZADO', 1],
   [2, 'DESPESA', '2026-02-01', 'Hospedagem de servidor (12 meses)', 9, 12, 300, 'REALIZADO', 1],
+  [3, 'RECEITA', '2026-02-01', 'Repasse do convênio', null, 1, 559453.02, 'REALIZADO', 1],
+  [3, 'DESPESA', '2026-03-05', 'Custo com pessoal', 10, 1, 989.83, 'REALIZADO', 1],
+  [3, 'DESPESA', '2026-03-20', 'Despesa operacional', 11, 1, 89089.0, 'REALIZADO', 1],
+  [3, 'DESPESA', '2026-04-10', 'Bolsa de estágio', 12, 1, 6000, 'REALIZADO', 1],
 ];
 
 /** Insere os dados de demonstração se o banco ainda não tiver usuários. Retorna true se inseriu. */
