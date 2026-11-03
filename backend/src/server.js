@@ -798,6 +798,16 @@ rota('POST', '/lancamentos/:id/comprovantes', async ({ req, usuario, params }) =
   return { status: 201, corpo: comprovanteParaResposta(comprovante) };
 });
 
+rota('GET', '/comprovantes/:id', async ({ usuario, params }) => {
+  const { rows: [c] } = await query(
+    'SELECT c.*, l.projeto_id FROM comprovantes c JOIN lancamentos l ON l.id = c.lancamento_id WHERE c.id = $1',
+    [idDaRota(params.id)],
+  );
+  if (!c) throw new HttpError(404, 'Comprovante não encontrado');
+  await exigirPermissao(usuario, c.projeto_id, 'ler');
+  return { arquivo: { conteudo: c.conteudo, tipo: c.tipo, nome: c.nome_arquivo } };
+});
+
 // ------------------------------------------------------------------ servidor
 
 const ROTAS_PUBLICAS = new Set([`${PREFIXO}/status`, `${PREFIXO}/auth/login`]);
