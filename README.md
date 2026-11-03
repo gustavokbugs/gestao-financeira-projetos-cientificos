@@ -44,3 +44,35 @@ do aplicativo; ele está neste repositório, na pasta `backend/`, para o app ter
 │   └── referencias/      PDF do enunciado e imagens de exemplo (planilha e painel)
 └── scripts/rodar.sh      Sobe banco + API, o emulador e instala o app
 ```
+
+## Como rodar
+
+Pré-requisitos: Android Studio (traz JDK e SDK), um emulador (AVD) e Docker.
+
+**Tudo de uma vez:**
+
+```bash
+./scripts/rodar.sh
+```
+
+**Passo a passo:**
+
+1. Banco + API: `docker compose up -d --build` (API em `localhost:3000`, Postgres em `localhost:5432`).
+2. Abrir a pasta `android/` no Android Studio, criar ou escolher um emulador e clicar em *Run*.
+   Pela linha de comando: `cd android && ./gradlew installDebug`.
+3. No build debug, o app usa `http://10.0.2.2:3000/api/v1/` (o computador visto de dentro do emulador).
+   Em aparelho físico, rode `adb reverse tcp:3000 tcp:3000` e use `-PapiUrlDebug=http://localhost:3000/api/v1/`.
+   Para usar o servidor, veja [docs/servidor-proprio.md](docs/servidor-proprio.md#5-apontar-o-app-para-o-servidor).
+
+**Usuários de teste** (senha `senha123`):
+
+| E-mail | Perfil |
+|---|---|
+| `coordenador@exemplo.com` | coordenador nos projetos 1, 2 e 3 (pode criar projetos) |
+| `gestor@exemplo.com` | gestor só no projeto 1 |
+| `consulta@exemplo.com` | consulta (somente leitura) nos projetos 1, 2 e 3 |
+
+O projeto 1 reproduz a planilha de orçamento do enunciado; o projeto 3, os valores do painel financeiro (CA-01).
+
+Para testar o tratamento de falhas, suba a API com `MOCK_DELAY_MS=1500` (atraso) ou `MOCK_FAIL_RATE=0.3` (30% das
+requisições falham com 503), ou pare a API (`docker compose stop api`), ou ative o modo avião no emulador.
