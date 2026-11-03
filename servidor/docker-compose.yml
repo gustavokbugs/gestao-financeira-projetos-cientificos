@@ -56,6 +56,28 @@ services:
       - api
     logging: *logs
 
+  # pg_dump diário em ./backups, guardando os últimos 14 dias.
+  backup:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        while true; do
+          arquivo=/backups/gestao-$$(date +%Y-%m-%d_%H%M).dump
+          pg_dump -h db -U gestao -d gestao -Fc -f "$$arquivo" && echo "backup ok: $$arquivo"
+          find /backups -name 'gestao-*.dump' -mtime +14 -delete
+          sleep 86400
+        done
+
 volumes:
   dados-postgres:
   caddy-dados:
