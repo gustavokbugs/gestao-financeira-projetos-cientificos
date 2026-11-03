@@ -12,5 +12,10 @@ android/.kotlin/
 *.keystore
 captures/
 
+# backend
+backend/node_modules/
+backend/.env
+.env
+
 # Sistema
 .DS_Store
