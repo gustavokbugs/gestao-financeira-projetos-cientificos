@@ -1,5 +1,7 @@
 'use strict';
 
+const fs = require('node:fs');
+const path = require('node:path');
 const { Pool, types } = require('pg');
 
 // NUMERIC e BIGINT viram Number (os valores do sistema cabem com folga);
@@ -37,4 +39,34 @@ async function transacao(fn) {
   }
 }
 
-module.exports = { pool, query, transacao };
+/** Aplica, em ordem, os arquivos de migrations/ que ainda não rodaram neste banco. */
+async function migrar() {
+  const pasta = path.join(__dirname, '..', 'migrations');
+  const arquivos = fs.readdirSync(pasta).filter((a) => a.endsWith('.sql')).sort();
+  const cliente = await pool.connect();
+  try {
+    await cliente.query('SELECT pg_advisory_lock(4815162342)'); // evita duas instâncias migrando ao mesmo tempo
+    await cliente.query(`CREATE TABLE IF NOT EXISTS schema_migrations (
+      versao TEXT PRIMARY KEY, aplicada_em TIMESTAMPTZ NOT NULL DEFAULT now())`);
+    const { rows } = await cliente.query('SELECT versao FROM schema_migrations');
+    const aplicadas = new Set(rows.map((r) => r.versao));
+    for (const arquivo of arquivos) {
+      if (aplicadas.has(arquivo)) continue;
+      await cliente.query('BEGIN');
+      try {
+        await cliente.query(fs.readFileSync(path.join(pasta, arquivo), 'utf8'));
+        await cliente.query('INSERT INTO schema_migrations (versao) VALUES ($1)', [arquivo]);
+        await cliente.query('COMMIT');
+        console.log(`Migração aplicada: ${arquivo}`);
+      } catch (erro) {
+        await cliente.query('ROLLBACK');
+        throw erro;
+      }
+    }
+  } finally {
+    await cliente.query('SELECT pg_advisory_unlock(4815162342)').catch(() => {});
+    cliente.release();
+  }
+}
+
+module.exports = { pool, query, transacao, migrar };
