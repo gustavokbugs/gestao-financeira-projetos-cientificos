@@ -13,6 +13,16 @@
         android:theme="@style/Theme.GestaoFinanceira">
 
         <activity
+            android:name=".ui.login.LoginActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".ui.projetos.ProjetosActivity"
             android:exported="false" />
 
