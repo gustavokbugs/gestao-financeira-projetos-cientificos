@@ -578,6 +578,11 @@ rota('GET', '/projetos/:id/dashboard', async ({ usuario, params }) => {
   return { status: 200, corpo: await dashboard(projeto) };
 });
 
+rota('GET', '/projetos/:id/rubricas', async ({ usuario, params }) => {
+  const projeto = await exigirPermissao(usuario, idDaRota(params.id), 'ler');
+  return { status: 200, corpo: await rubricasDoProjeto(projeto.id) };
+});
+
 // ------------------------------------------------------------------ servidor
 
 const ROTAS_PUBLICAS = new Set([`${PREFIXO}/status`, `${PREFIXO}/auth/login`]);
