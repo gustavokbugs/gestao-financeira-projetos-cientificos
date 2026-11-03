@@ -285,6 +285,84 @@ function diferencas(antes, depois, campos) {
     .map((c) => ({ campo: c, de: antes[c] ?? null, para: depois[c] ?? null }));
 }
 
+// ----------------------------------------------------------------- validações
+
+function validarProjeto(d) {
+  const erros = [];
+  if (typeof d.titulo !== 'string' || !d.titulo.trim()) erros.push({ campo: 'titulo', mensagem: 'Informe o título' });
+  if (typeof d.fonteRecursos !== 'string' || !d.fonteRecursos.trim()) erros.push({ campo: 'fonteRecursos', mensagem: 'Informe a fonte de recursos' });
+  if (!dataValida(d.vigenciaInicio)) erros.push({ campo: 'vigenciaInicio', mensagem: 'Data inválida (use AAAA-MM-DD)' });
+  if (!dataValida(d.vigenciaFim)) erros.push({ campo: 'vigenciaFim', mensagem: 'Data inválida (use AAAA-MM-DD)' });
+  if (dataValida(d.vigenciaInicio) && dataValida(d.vigenciaFim) && d.vigenciaFim < d.vigenciaInicio) {
+    erros.push({ campo: 'vigenciaFim', mensagem: 'O fim da vigência deve ser posterior ao início' });
+  }
+  if (!(numero(d.orcamentoAprovado) > 0)) erros.push({ campo: 'orcamentoAprovado', mensagem: 'Informe um orçamento maior que zero' });
+  if (d.responsaveis !== undefined) {
+    const ok = Array.isArray(d.responsaveis) && d.responsaveis.every((r) => r && typeof r.nome === 'string' && r.nome.trim());
+    if (!ok) erros.push({ campo: 'responsaveis', mensagem: 'Cada responsável precisa de um nome' });
+  }
+  if (erros.length) throw new HttpError(422, 'Dados do projeto inválidos', erros);
+}
+
+async function validarRubrica(c, d, projeto, rubricaAtualId = null) {
+  const erros = [];
+  if (typeof d.nome !== 'string' || !d.nome.trim()) erros.push({ campo: 'nome', mensagem: 'Informe o nome da rubrica' });
+  if (!(numero(d.orcamento) >= 0)) erros.push({ campo: 'orcamento', mensagem: 'Informe um orçamento igual ou maior que zero' });
+
+  let pai = null;
+  if (d.rubricaPaiId != null) {
+    const { rows } = await c.query('SELECT * FROM rubricas WHERE id = $1 AND projeto_id = $2', [Number(d.rubricaPaiId) || 0, projeto.id]);
+    pai = rows[0];
+    if (!pai || pai.rubrica_pai_id !== null || pai.id === rubricaAtualId) {
+      erros.push({ campo: 'rubricaPaiId', mensagem: 'Rubrica principal inválida (são permitidos dois níveis)' });
+    }
+  }
+  if (erros.length) throw new HttpError(422, 'Dados da rubrica inválidos', erros);
+
+  const { rows: irmas } = await c.query(
+    `SELECT nome, orcamento FROM rubricas
+      WHERE projeto_id = $1 AND rubrica_pai_id IS NOT DISTINCT FROM $2 AND id IS DISTINCT FROM $3`,
+    [projeto.id, pai ? pai.id : null, rubricaAtualId],
+  );
+  if (irmas.some((r) => r.nome.toLowerCase() === d.nome.trim().toLowerCase())) {
+    erros.push({ campo: 'nome', mensagem: 'Já existe uma rubrica com este nome' });
+  }
+  const soma = irmas.reduce((t, r) => t + r.orcamento, 0) + d.orcamento;
+  const limite = pai ? pai.orcamento : projeto.orcamento_aprovado;
+  if (soma > limite + 1e-9) {
+    erros.push({
+      campo: 'orcamento',
+      mensagem: pai
+        ? `A soma das subrubricas (${brl(soma)}) ultrapassa o orçamento de "${pai.nome}" (${brl(limite)})`
+        : `A soma das rubricas (${brl(soma)}) ultrapassa o orçamento aprovado do projeto (${brl(limite)})`,
+    });
+  }
+  if (erros.length) throw new HttpError(422, 'Dados da rubrica inválidos', erros);
+  return pai;
+}
+
+async function validarLancamento(c, d, projeto) {
+  const erros = [];
+  if (!TIPOS_LANCAMENTO.includes(d.tipo)) erros.push({ campo: 'tipo', mensagem: 'Tipo deve ser RECEITA ou DESPESA' });
+  if (!SITUACOES.includes(d.situacao)) erros.push({ campo: 'situacao', mensagem: 'Situação deve ser PREVISTO, REALIZADO ou CANCELADO' });
+  if (typeof d.descricao !== 'string' || !d.descricao.trim()) erros.push({ campo: 'descricao', mensagem: 'Informe a descrição' });
+  if (!dataValida(d.data)) {
+    erros.push({ campo: 'data', mensagem: 'Data inválida (use AAAA-MM-DD)' });
+  } else if (d.data < projeto.vigencia_inicio || d.data > projeto.vigencia_fim) {
+    erros.push({ campo: 'data', mensagem: `A data deve estar na vigência do projeto (${projeto.vigencia_inicio} a ${projeto.vigencia_fim})` });
+  }
+  if (!(numero(d.quantidade) > 0)) erros.push({ campo: 'quantidade', mensagem: 'Quantidade deve ser maior que zero' });
+  if (!(numero(d.valorUnitario) > 0)) erros.push({ campo: 'valorUnitario', mensagem: 'Valor unitário deve ser maior que zero' });
+
+  if (d.rubricaId != null) {
+    const { rows } = await c.query('SELECT 1 FROM rubricas WHERE id = $1 AND projeto_id = $2', [Number(d.rubricaId) || 0, projeto.id]);
+    if (!rows[0]) erros.push({ campo: 'rubricaId', mensagem: 'Rubrica não pertence a este projeto' });
+  } else if (d.tipo === 'DESPESA') {
+    erros.push({ campo: 'rubricaId', mensagem: 'Informe a rubrica da despesa' });
+  }
+  if (erros.length) throw new HttpError(422, 'Dados do lançamento inválidos', erros);
+}
+
 // -------------------------------------------------------------------- rotas
 
 const rotas = [];
