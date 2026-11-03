@@ -20,7 +20,7 @@ public final class ApiClient {
     public static ApiService criar(String baseUrl, SessionManager sessao, Runnable aoExpirarSessao) {
         OkHttpClient.Builder http = new OkHttpClient.Builder()
                 .connectTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS) // relatórios e comprovantes podem demorar em redes lentas
                 .writeTimeout(60, TimeUnit.SECONDS)
                 .addInterceptor(chain -> {
                     Request requisicao = chain.request();
