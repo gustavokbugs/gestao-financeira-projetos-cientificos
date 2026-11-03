@@ -13,6 +13,10 @@
         android:theme="@style/Theme.GestaoFinanceira">
 
         <activity
+            android:name=".ui.projetos.ProjetosActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ui.dashboard.DashboardActivity"
             android:exported="false"
             android:parentActivityName=".ui.projetos.ProjetosActivity" />
