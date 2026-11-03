@@ -27,3 +27,20 @@ orçamentária de projetos de pesquisa, por rubricas e demonstrativos.
 Pelas premissas do PDF, o app **não acessa banco de dados diretamente**: tudo passa pela API REST autenticada
 (contrato em [docs/api-endpoints.md](docs/api-endpoints.md)). O enunciado trata o backend como **entrega separada**
 do aplicativo; ele está neste repositório, na pasta `backend/`, para o app ter um servidor e um banco reais.
+
+## Estrutura
+
+```
+.
+├── android/              Projeto Android Studio (app Java)
+│   └── app/src/main/java/br/gestaofinanceira/app/
+│       ├── data/remote/  Retrofit: ApiClient, ApiService, DTOs, tratamento de erros
+│       ├── data/local/   SessionManager (token JWT cifrado)
+│       └── ui/           login, projetos, dashboard, common
+├── backend/              API REST (Node.js) + migrações do PostgreSQL + dados de demonstração
+├── docker-compose.yml    PostgreSQL + API para desenvolver (HTTP, localhost:3000)
+├── servidor/             Produção no PC servidor: compose com Caddy (HTTPS) e backup
+├── docs/                 Requisitos, telas e fluxos, endpoints, permissões, testes, decisões
+│   └── referencias/      PDF do enunciado e imagens de exemplo (planilha e painel)
+└── scripts/rodar.sh      Sobe banco + API, o emulador e instala o app
+```
