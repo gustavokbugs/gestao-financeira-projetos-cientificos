@@ -459,6 +459,47 @@ async function validarLancamento(c, d, projeto) {
   if (erros.length) throw new HttpError(422, 'Dados do lançamento inválidos', erros);
 }
 
+// ------------------------------------------------------------ filtros (GP-07)
+
+function filtroLancamentos(projetoId, q) {
+  const condicoes = ['l.projeto_id = $1'];
+  const params = [projetoId];
+  const erros = [];
+  const add = (sql, valor) => {
+    params.push(valor);
+    condicoes.push(sql.replaceAll('?', `$${params.length}`));
+  };
+
+  const tipo = q.get('tipo');
+  if (tipo) TIPOS_LANCAMENTO.includes(tipo) ? add('l.tipo = ?', tipo) : erros.push({ campo: 'tipo', mensagem: 'Tipo inválido' });
+  const situacao = q.get('situacao');
+  if (situacao) SITUACOES.includes(situacao) ? add('l.situacao = ?', situacao) : erros.push({ campo: 'situacao', mensagem: 'Situação inválida' });
+  const rubricaId = q.get('rubricaId');
+  if (rubricaId) {
+    const id = Number(rubricaId);
+    Number.isInteger(id) && id > 0
+      ? add('(l.rubrica_id = ? OR l.rubrica_id IN (SELECT s.id FROM rubricas s WHERE s.rubrica_pai_id = ?))', id)
+      : erros.push({ campo: 'rubricaId', mensagem: 'Rubrica inválida' });
+  }
+  for (const [campo, operador] of [['de', '>='], ['ate', '<=']]) {
+    const valor = q.get(campo);
+    if (valor) dataValida(valor) ? add(`l.data ${operador} ?`, valor) : erros.push({ campo, mensagem: 'Data inválida (use AAAA-MM-DD)' });
+  }
+  const busca = q.get('busca');
+  if (busca) add(`l.descricao ILIKE '%' || ? || '%'`, busca.replace(/[\\%_]/g, '\\$&'));
+
+  if (erros.length) throw new HttpError(422, 'Filtros inválidos', erros);
+  return { where: condicoes.join(' AND '), params };
+}
+
+async function listarLancamentos(projetoId, q, paginacao) {
+  const { where, params } = filtroLancamentos(projetoId, q);
+  let sql = `${SELECT_LANCAMENTO} WHERE ${where} ORDER BY l.data DESC, l.id DESC`;
+  if (paginacao) sql += ` LIMIT ${paginacao.tamanho} OFFSET ${(paginacao.pagina - 1) * paginacao.tamanho}`;
+  const { rows } = await query(sql, params);
+  return rows;
+}
+
 // -------------------------------------------------------------------- rotas
 
 const rotas = [];
