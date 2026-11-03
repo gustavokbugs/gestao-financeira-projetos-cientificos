@@ -74,3 +74,17 @@ CREATE TABLE comprovantes (
     enviado_em    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX comprovantes_lancamento ON comprovantes (lancamento_id);
+
+-- Auditoria: quem fez o quê e quando, com os campos alterados (GP-07 e GP-09).
+CREATE TABLE historico (
+    id          BIGSERIAL PRIMARY KEY,
+    projeto_id  INT         NOT NULL REFERENCES projetos(id) ON DELETE CASCADE,
+    entidade    TEXT        NOT NULL,
+    entidade_id INT         NOT NULL,
+    acao        TEXT        NOT NULL,
+    usuario_id  INT         NOT NULL REFERENCES usuarios(id),
+    data        TIMESTAMPTZ NOT NULL DEFAULT now(),
+    alteracoes  JSONB       NOT NULL DEFAULT '[]'
+);
+CREATE INDEX historico_projeto ON historico (projeto_id, data DESC);
+CREATE INDEX historico_entidade ON historico (entidade, entidade_id);
