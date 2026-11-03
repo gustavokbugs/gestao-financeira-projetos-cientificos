@@ -2,5 +2,8 @@
 <resources>
     <style name="Theme.GestaoFinanceira" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primaria</item>
+        <!-- Ícones escuros na barra de status/navegação sobre o fundo claro. -->
+        <item name="android:windowLightStatusBar">@bool/barras_claras</item>
+        <item name="android:windowLightNavigationBar">@bool/barras_claras</item>
     </style>
 </resources>
