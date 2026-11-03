@@ -2,12 +2,16 @@ package br.gestaofinanceira.app.ui.projetos;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
@@ -18,6 +22,7 @@ import br.gestaofinanceira.app.data.remote.ApiErros;
 import br.gestaofinanceira.app.data.remote.dto.Projeto;
 import br.gestaofinanceira.app.ui.common.EstadoTela;
 import br.gestaofinanceira.app.ui.dashboard.DashboardActivity;
+import br.gestaofinanceira.app.ui.login.LoginActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -98,6 +103,33 @@ public class ProjetosActivity extends AppCompatActivity {
         intent.putExtra(DashboardActivity.EXTRA_PROJETO_ID, projeto.id);
         intent.putExtra(DashboardActivity.EXTRA_PROJETO_TITULO, projeto.titulo);
         intent.putExtra(DashboardActivity.EXTRA_PAPEL, projeto.papel);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_projetos, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.acao_sair) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.sair)
+                    .setMessage(R.string.confirmar_sair)
+                    .setNegativeButton(R.string.cancelar, null)
+                    .setPositiveButton(R.string.sair, (d, w) -> sair())
+                    .show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void sair() {
+        GestaoFinanceiraApp.de(this).getSessao().limpar();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
