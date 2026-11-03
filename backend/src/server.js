@@ -270,6 +270,21 @@ async function buscarLancamento(id, c = { query }) {
   return rows[0] || null;
 }
 
+// ------------------------------------------------------------------ histórico
+
+async function registrarHistorico(c, projetoId, entidade, entidadeId, acao, usuario, alteracoes = []) {
+  await c.query(
+    `INSERT INTO historico (projeto_id, entidade, entidade_id, acao, usuario_id, alteracoes) VALUES ($1,$2,$3,$4,$5,$6)`,
+    [projetoId, entidade, entidadeId, acao, usuario.id, JSON.stringify(alteracoes)],
+  );
+}
+
+function diferencas(antes, depois, campos) {
+  return campos
+    .filter((c) => JSON.stringify(antes[c]) !== JSON.stringify(depois[c]))
+    .map((c) => ({ campo: c, de: antes[c] ?? null, para: depois[c] ?? null }));
+}
+
 // -------------------------------------------------------------------- rotas
 
 const rotas = [];
