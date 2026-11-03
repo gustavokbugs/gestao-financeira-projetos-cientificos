@@ -675,6 +675,36 @@ rota('GET', '/projetos/:id/lancamentos', async ({ usuario, params, query: q }) =
   return { status: 200, corpo: { itens: itens.map(lancamentoParaResposta), total: contagem.total, pagina, tamanho } };
 });
 
+rota('POST', '/projetos/:id/lancamentos', async ({ req, usuario, params }) => {
+  const projetoId = idDaRota(params.id);
+  const d = await lerJson(req);
+  const dados = {
+    tipo: d.tipo,
+    data: d.data,
+    descricao: typeof d.descricao === 'string' ? d.descricao.trim() : d.descricao,
+    rubricaId: d.rubricaId ?? null,
+    quantidade: d.quantidade,
+    valorUnitario: d.valorUnitario,
+    situacao: d.situacao ?? 'PREVISTO',
+  };
+  const resposta = await transacao(async (c) => {
+    const projeto = await exigirPermissao(usuario, projetoId, 'lancar', c);
+    await validarLancamento(c, dados, projeto);
+    const agora = new Date();
+    const { rows: [l] } = await c.query(
+      `INSERT INTO lancamentos (projeto_id, tipo, data, descricao, rubrica_id, quantidade, valor_unitario, valor_total,
+                                situacao, criado_por, criado_em, atualizado_por, atualizado_em)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, ROUND(ROUND($6::numeric, 3) * ROUND($7::numeric, 2), 2), $8, $9, $10, $9, $10) RETURNING id`,
+      [projetoId, dados.tipo, dados.data, dados.descricao, dados.rubricaId, dados.quantidade, dados.valorUnitario, dados.situacao, usuario.id, agora],
+    );
+    await registrarHistorico(c, projetoId, 'lancamento', l.id, 'CRIACAO', usuario);
+    const lancamento = await buscarLancamento(l.id, c);
+    const resumo = dados.rubricaId ? await resumoRubrica(dados.rubricaId, c) : null;
+    return { ...lancamentoParaResposta(lancamento), alertaRubrica: resumo ? resumo.alerta : null };
+  });
+  return { status: 201, corpo: resposta };
+});
+
 // ------------------------------------------------------------------ servidor
 
 const ROTAS_PUBLICAS = new Set([`${PREFIXO}/status`, `${PREFIXO}/auth/login`]);
