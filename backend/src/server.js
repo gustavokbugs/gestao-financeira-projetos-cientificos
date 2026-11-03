@@ -599,6 +599,31 @@ rota('POST', '/projetos/:id/rubricas', async ({ req, usuario, params }) => {
   return { status: 201, corpo: resumo };
 });
 
+rota('PUT', '/rubricas/:id', async ({ req, usuario, params }) => {
+  const rubricaId = idDaRota(params.id);
+  const d = await lerJson(req);
+  const resumo = await transacao(async (c) => {
+    const { rows: [rubrica] } = await c.query('SELECT * FROM rubricas WHERE id = $1', [rubricaId]);
+    if (!rubrica) throw new HttpError(404, 'Rubrica não encontrada');
+    const projeto = await exigirPermissao(usuario, rubrica.projeto_id, 'gerenciar', c);
+    const antes = { nome: rubrica.nome, orcamento: rubrica.orcamento };
+    const novo = { nome: d.nome ?? rubrica.nome, orcamento: d.orcamento ?? rubrica.orcamento, rubricaPaiId: rubrica.rubrica_pai_id };
+    await validarRubrica(c, novo, projeto, rubricaId);
+    const { rows: [filhas] } = await c.query('SELECT COALESCE(SUM(orcamento), 0) AS total FROM rubricas WHERE rubrica_pai_id = $1', [rubricaId]);
+    if (novo.orcamento + 1e-9 < filhas.total) {
+      throw new HttpError(422, 'Dados da rubrica inválidos', [
+        { campo: 'orcamento', mensagem: `O orçamento não pode ser menor que a soma das subrubricas (${brl(filhas.total)})` },
+      ]);
+    }
+    novo.nome = novo.nome.trim();
+    await c.query('UPDATE rubricas SET nome = $2, orcamento = $3 WHERE id = $1', [rubricaId, novo.nome, novo.orcamento]);
+    const alteracoes = diferencas(antes, novo, ['nome', 'orcamento']);
+    if (alteracoes.length) await registrarHistorico(c, rubrica.projeto_id, 'rubrica', rubricaId, 'ALTERACAO', usuario, alteracoes);
+    return resumoRubrica(rubricaId, c);
+  });
+  return { status: 200, corpo: resumo };
+});
+
 // ------------------------------------------------------------------ servidor
 
 const ROTAS_PUBLICAS = new Set([`${PREFIXO}/status`, `${PREFIXO}/auth/login`]);
