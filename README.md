@@ -11,3 +11,19 @@ orçamentária de projetos de pesquisa, por rubricas e demonstrativos.
 - Alec Kniphoff da Cruz
 - Gustavo Kardauke Bugs
 - Pedro Henrique Hermes
+
+## Tecnologia
+
+| Item | Escolha |
+|---|---|
+| App | Android nativo em **Java** (Android Gradle Plugin 9.5, Gradle 9.8) |
+| SDK | compileSdk/targetSdk 36, **minSdk 26 (Android 8.0)**, proposta a confirmar (ver [decisões](docs/decisoes.md)) |
+| Rede | Retrofit 3 + OkHttp, JSON, **JWT** no cabeçalho `Authorization: Bearer` |
+| UI | AppCompat + Material Components 3 |
+| Credenciais | token cifrado com AES-GCM via Android Keystore; a senha nunca é salva |
+| API | [`backend/`](backend/): Node.js 24 + **PostgreSQL** (driver `pg`), em Docker |
+| Servidor | PC próprio com Docker: PostgreSQL + API + Caddy (HTTPS) + backup diário, ver [servidor próprio](docs/servidor-proprio.md) |
+
+Pelas premissas do PDF, o app **não acessa banco de dados diretamente**: tudo passa pela API REST autenticada
+(contrato em [docs/api-endpoints.md](docs/api-endpoints.md)). O enunciado trata o backend como **entrega separada**
+do aplicativo; ele está neste repositório, na pasta `backend/`, para o app ter um servidor e um banco reais.
