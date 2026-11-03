@@ -1,8 +1,11 @@
 package br.gestaofinanceira.app.data.remote;
 
+import java.util.List;
+
 import br.gestaofinanceira.app.data.remote.dto.Dashboard;
 import br.gestaofinanceira.app.data.remote.dto.LoginRequest;
 import br.gestaofinanceira.app.data.remote.dto.LoginResponse;
+import br.gestaofinanceira.app.data.remote.dto.Projeto;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -18,6 +21,9 @@ public interface ApiService {
 
     @POST("auth/login")
     Call<LoginResponse> login(@Body LoginRequest corpo);
+
+    @GET("projetos")
+    Call<List<Projeto>> listarProjetos();
 
     @GET("projetos/{id}/dashboard")
     Call<Dashboard> dashboard(@Path("id") long projetoId);
