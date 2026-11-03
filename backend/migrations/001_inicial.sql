@@ -30,3 +30,13 @@ CREATE TABLE membros (
     papel      TEXT NOT NULL CHECK (papel IN ('coordenador', 'gestor', 'consulta')),
     PRIMARY KEY (usuario_id, projeto_id)
 );
+
+-- Rubricas em dois níveis: rubrica principal (rubrica_pai_id nulo) e subrubricas (GP-03).
+CREATE TABLE rubricas (
+    id             SERIAL PRIMARY KEY,
+    projeto_id     INT           NOT NULL REFERENCES projetos(id) ON DELETE CASCADE,
+    rubrica_pai_id INT           REFERENCES rubricas(id),
+    nome           TEXT          NOT NULL,
+    orcamento      NUMERIC(14,2) NOT NULL CHECK (orcamento >= 0)
+);
+CREATE UNIQUE INDEX rubricas_nome_unico ON rubricas (projeto_id, COALESCE(rubrica_pai_id, 0), lower(nome));
