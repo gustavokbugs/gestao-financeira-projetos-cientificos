@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaria">#1F5FAD</color>
+    <color name="receita">#2E7D32</color>
+    <color name="despesa">#C62828</color>
+    <color name="saldo">#1F5FAD</color>
+    <color name="normal">#2E7D32</color>
+    <color name="alerta_atencao">#B26A00</color>
+    <color name="alerta_critico">#C62828</color>
+    <color name="fundo_alerta_atencao">#FFF3CD</color>
+    <color name="texto_alerta_atencao">#664D03</color>
+    <color name="fundo_alerta_critico">#F8D7DA</color>
+    <color name="texto_alerta_critico">#842029</color>
+</resources>
