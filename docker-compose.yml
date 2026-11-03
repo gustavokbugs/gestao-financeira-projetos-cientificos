@@ -1,0 +1,33 @@
+# Ambiente local: PostgreSQL + API.  Uso: docker compose up -d --build
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: gestao
+      POSTGRES_PASSWORD: gestao
+      POSTGRES_DB: gestao
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - dados-postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gestao -d gestao"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgres://gestao:gestao@db:5432/gestao
+      JWT_SECRET: segredo-local-de-desenvolvimento-nao-usar-em-producao
+      SEED_DEMO: "true"
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  dados-postgres:
