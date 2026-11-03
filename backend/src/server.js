@@ -665,6 +665,16 @@ rota('PUT', '/rubricas/:id', async ({ req, usuario, params }) => {
   return { status: 200, corpo: resumo };
 });
 
+rota('GET', '/projetos/:id/lancamentos', async ({ usuario, params, query: q }) => {
+  const projeto = await exigirPermissao(usuario, idDaRota(params.id), 'ler');
+  const pagina = Math.max(1, Math.floor(Number(q.get('pagina'))) || 1);
+  const tamanho = Math.min(100, Math.max(1, Math.floor(Number(q.get('tamanho'))) || 20));
+  const { where, params: filtroParams } = filtroLancamentos(projeto.id, q);
+  const { rows: [contagem] } = await query(`SELECT count(*) AS total FROM lancamentos l WHERE ${where}`, filtroParams);
+  const itens = await listarLancamentos(projeto.id, q, { pagina, tamanho });
+  return { status: 200, corpo: { itens: itens.map(lancamentoParaResposta), total: contagem.total, pagina, tamanho } };
+});
+
 // ------------------------------------------------------------------ servidor
 
 const ROTAS_PUBLICAS = new Set([`${PREFIXO}/status`, `${PREFIXO}/auth/login`]);
