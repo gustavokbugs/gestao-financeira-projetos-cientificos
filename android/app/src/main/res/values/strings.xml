@@ -2,6 +2,21 @@
 <resources>
     <string name="app_name">Gestão Financeira</string>
 
+    <!-- Dashboard -->
+    <string name="perfil_formato">Perfil: %1$s</string>
+    <string name="receita">Receita</string>
+    <string name="despesa">Despesa</string>
+    <string name="saldo">Saldo</string>
+    <string name="orcamento_previsto_executado">Orçamento previsto x executado</string>
+    <string name="orcamento_executado_formato">%1$s de %2$s (%3$s)</string>
+    <string name="alertas">Alertas</string>
+    <string name="alerta_formato">%1$s: %2$s</string>
+    <string name="rubricas">Rubricas</string>
+    <string name="rubrica_valores_formato">Executado %1$s · Previsto %2$s · Orçado %3$s</string>
+    <string name="rubrica_saldo_formato">Saldo %1$s</string>
+    <string name="participacao_formato">%1$s das despesas</string>
+    <string name="atualizado_em_formato">Atualizado em %1$s</string>
+
     <!-- Comum -->
     <string name="tentar_novamente">Tentar novamente</string>
 </resources>
