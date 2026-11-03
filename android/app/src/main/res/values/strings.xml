@@ -17,6 +17,9 @@
     <string name="nenhum_projeto">Você ainda não participa de nenhum projeto.</string>
     <string name="vigencia_formato">Vigência: %1$s a %2$s</string>
     <string name="orcamento_aprovado_formato">Orçamento aprovado: %1$s</string>
+    <string name="sair">Sair</string>
+    <string name="confirmar_sair">Deseja encerrar a sessão neste aparelho?</string>
+    <string name="cancelar">Cancelar</string>
 
     <!-- Dashboard -->
     <string name="perfil_formato">Perfil: %1$s</string>
