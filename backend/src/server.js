@@ -190,6 +190,86 @@ async function exigirPermissao(usuario, projetoId, acao, c = { query }) {
   return projeto;
 }
 
+// -------------------------------------------------------------- serialização
+
+const autorDe = (usuario) => ({ id: usuario.id, nome: usuario.nome });
+
+function projetoParaResposta(p) {
+  return {
+    id: p.id,
+    codigo: p.codigo,
+    titulo: p.titulo,
+    descricao: p.descricao,
+    vigenciaInicio: p.vigencia_inicio,
+    vigenciaFim: p.vigencia_fim,
+    fonteRecursos: p.fonte_recursos,
+    responsaveis: p.responsaveis,
+    orcamentoAprovado: p.orcamento_aprovado,
+    papel: p.papel,
+  };
+}
+
+const SELECT_LANCAMENTO = `
+  SELECT l.*, cu.nome AS criado_por_nome, au.nome AS atualizado_por_nome,
+         r.nome AS rubrica_nome, r.rubrica_pai_id AS rubrica_pai,
+         (SELECT count(*) FROM comprovantes c WHERE c.lancamento_id = l.id) AS quantidade_comprovantes
+    FROM lancamentos l
+    JOIN usuarios cu ON cu.id = l.criado_por
+    JOIN usuarios au ON au.id = l.atualizado_por
+    LEFT JOIN rubricas r ON r.id = l.rubrica_id`;
+
+function lancamentoParaResposta(l) {
+  return {
+    id: l.id,
+    projetoId: l.projeto_id,
+    tipo: l.tipo,
+    data: l.data,
+    descricao: l.descricao,
+    rubricaId: l.rubrica_id,
+    rubrica: l.rubrica_id ? { id: l.rubrica_id, nome: l.rubrica_nome, rubricaPaiId: l.rubrica_pai } : null,
+    quantidade: l.quantidade,
+    valorUnitario: l.valor_unitario,
+    valorTotal: l.valor_total,
+    situacao: l.situacao,
+    criadoPor: { id: l.criado_por, nome: l.criado_por_nome },
+    criadoEm: iso(l.criado_em),
+    atualizadoPor: { id: l.atualizado_por, nome: l.atualizado_por_nome },
+    atualizadoEm: iso(l.atualizado_em),
+    quantidadeComprovantes: l.quantidade_comprovantes,
+  };
+}
+
+function comprovanteParaResposta(c) {
+  return {
+    id: c.id,
+    lancamentoId: c.lancamento_id,
+    nomeArquivo: c.nome_arquivo,
+    tipo: c.tipo,
+    tamanho: c.tamanho,
+    enviadoPor: { id: c.enviado_por, nome: c.enviado_por_nome },
+    enviadoEm: iso(c.enviado_em),
+    url: `${PREFIXO}/comprovantes/${c.id}`,
+  };
+}
+
+function historicoParaResposta(h) {
+  return {
+    id: h.id,
+    projetoId: h.projeto_id,
+    entidade: h.entidade,
+    entidadeId: h.entidade_id,
+    acao: h.acao,
+    usuario: { id: h.usuario_id, nome: h.usuario_nome },
+    data: iso(h.data),
+    alteracoes: h.alteracoes,
+  };
+}
+
+async function buscarLancamento(id, c = { query }) {
+  const { rows } = await c.query(`${SELECT_LANCAMENTO} WHERE l.id = $1`, [id]);
+  return rows[0] || null;
+}
+
 // -------------------------------------------------------------------- rotas
 
 const rotas = [];
