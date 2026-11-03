@@ -112,6 +112,84 @@ function ipDe(req) {
   return (typeof encaminhado === 'string' && encaminhado.split(',').pop().trim()) || req.socket.remoteAddress || '';
 }
 
+// ------------------------------------------------------------- autenticação
+
+function assinarToken(usuario) {
+  const agora = Math.floor(Date.now() / 1000);
+  const exp = agora + JWT_VALIDADE_S;
+  const cabecalho = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
+  const carga = Buffer.from(JSON.stringify({ sub: String(usuario.id), nome: usuario.nome, iat: agora, exp })).toString('base64url');
+  const assinatura = crypto.createHmac('sha256', JWT_SECRET).update(`${cabecalho}.${carga}`).digest('base64url');
+  return { token: `${cabecalho}.${carga}.${assinatura}`, expiraEm: new Date(exp * 1000).toISOString() };
+}
+
+function verificarToken(token) {
+  const partes = token.split('.');
+  if (partes.length !== 3) return null;
+  const [cabecalho, carga, assinatura] = partes;
+  const esperada = crypto.createHmac('sha256', JWT_SECRET).update(`${cabecalho}.${carga}`).digest();
+  const recebida = Buffer.from(assinatura, 'base64url');
+  if (recebida.length !== esperada.length || !crypto.timingSafeEqual(recebida, esperada)) return null;
+  try {
+    const { alg } = JSON.parse(Buffer.from(cabecalho, 'base64url').toString('utf8'));
+    const dados = JSON.parse(Buffer.from(carga, 'base64url').toString('utf8'));
+    if (alg !== 'HS256' || typeof dados.exp !== 'number' || dados.exp <= Date.now() / 1000) return null;
+    return dados;
+  } catch {
+    return null;
+  }
+}
+
+function senhaConfere(linha, senha) {
+  const calculado = crypto.scryptSync(String(senha), linha.senha_salt, 32);
+  return crypto.timingSafeEqual(calculado, Buffer.from(linha.senha_hash, 'hex'));
+}
+
+// Limite simples de tentativas de login: 10 falhas em 15 minutos por IP + e-mail.
+const tentativasLogin = new Map();
+const JANELA_LOGIN_MS = 15 * 60 * 1000;
+
+function verificarLimiteLogin(chave) {
+  const registro = tentativasLogin.get(chave);
+  if (registro && registro.ate > Date.now() && registro.falhas >= 10) {
+    throw new HttpError(429, 'Muitas tentativas de login. Aguarde alguns minutos e tente novamente.');
+  }
+}
+
+function registrarFalhaLogin(chave) {
+  const agora = Date.now();
+  const registro = tentativasLogin.get(chave);
+  if (!registro || registro.ate <= agora) tentativasLogin.set(chave, { falhas: 1, ate: agora + JANELA_LOGIN_MS });
+  else registro.falhas += 1;
+  if (tentativasLogin.size > 10000) {
+    for (const [k, v] of tentativasLogin) if (v.ate <= agora) tentativasLogin.delete(k);
+  }
+}
+
+async function autenticar(req) {
+  const [esquema, token] = (req.headers.authorization || '').split(' ');
+  const dados = esquema === 'Bearer' && token ? verificarToken(token) : null;
+  if (dados) {
+    const { rows } = await query('SELECT id, nome, email, pode_criar_projetos FROM usuarios WHERE id = $1', [Number(dados.sub)]);
+    if (rows[0]) return rows[0];
+  }
+  throw new HttpError(401, 'Sessão inválida ou expirada. Faça login novamente.');
+}
+
+// Projetos dos quais o usuário não participa respondem 404, para não revelar que existem.
+async function exigirPermissao(usuario, projetoId, acao, c = { query }) {
+  const { rows } = await c.query(
+    'SELECT p.*, m.papel FROM projetos p JOIN membros m ON m.projeto_id = p.id AND m.usuario_id = $2 WHERE p.id = $1',
+    [projetoId, usuario.id],
+  );
+  const projeto = rows[0];
+  if (!projeto) throw new HttpError(404, 'Projeto não encontrado');
+  if (!PERMISSOES[projeto.papel].includes(acao)) {
+    throw new HttpError(403, `O perfil "${projeto.papel}" não permite esta operação neste projeto`);
+  }
+  return projeto;
+}
+
 // -------------------------------------------------------------------- rotas
 
 const rotas = [];
@@ -123,6 +201,31 @@ const rota = (metodo, padrao, handler) => {
 rota('GET', '/status', async () => {
   await query('SELECT 1');
   return { status: 200, corpo: { status: 'ok', banco: 'ok', horario: new Date().toISOString() } };
+});
+
+rota('POST', '/auth/login', async ({ req }) => {
+  const { email, senha } = await lerJson(req);
+  if (!email || !senha) {
+    throw new HttpError(422, 'Informe e-mail e senha', [
+      ...(!email ? [{ campo: 'email', mensagem: 'Informe o e-mail' }] : []),
+      ...(!senha ? [{ campo: 'senha', mensagem: 'Informe a senha' }] : []),
+    ]);
+  }
+  const emailNormalizado = String(email).trim().toLowerCase();
+  const chave = `${ipDe(req)}|${emailNormalizado}`;
+  verificarLimiteLogin(chave);
+  const { rows } = await query('SELECT * FROM usuarios WHERE email = $1', [emailNormalizado]);
+  const usuario = rows[0];
+  if (!usuario || !senhaConfere(usuario, senha)) {
+    registrarFalhaLogin(chave);
+    throw new HttpError(401, 'E-mail ou senha incorretos');
+  }
+  tentativasLogin.delete(chave);
+  const { token, expiraEm } = assinarToken(usuario);
+  return {
+    status: 200,
+    corpo: { token, tipo: 'Bearer', expiraEm, usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email, podeCriarProjetos: usuario.pode_criar_projetos } },
+  };
 });
 
 // ------------------------------------------------------------------ servidor
