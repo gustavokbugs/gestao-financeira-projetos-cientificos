@@ -1,0 +1,50 @@
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+android {
+    namespace = 'br.gestaofinanceira.app'
+    compileSdk = 36
+
+    defaultConfig {
+        applicationId = 'br.gestaofinanceira.app'
+        minSdk = 26          // Android 8.0 - proposta, ver docs/decisoes.md
+        targetSdk = 36
+        versionCode = 1
+        versionName = '0.1.0'
+    }
+
+    buildTypes {
+        debug {
+            // Padrão: API local (docker compose) vista pelo emulador em 10.0.2.2. Ver gradle.properties.
+            buildConfigField 'String', 'API_BASE_URL', "\"${project.property('apiUrlDebug')}\""
+        }
+        release {
+            // URL HTTPS da API na nuvem. Ver gradle.properties e docs/deploy-nuvem.md.
+            buildConfigField 'String', 'API_BASE_URL', "\"${project.property('apiUrlRelease')}\""
+            minifyEnabled = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.recyclerview
+    implementation libs.swiperefreshlayout
+    implementation libs.retrofit
+    implementation libs.retrofit.gson
+    implementation libs.okhttp.logging
+
+    testImplementation libs.junit
+}
