@@ -500,6 +500,66 @@ async function listarLancamentos(projetoId, q, paginacao) {
   return rows;
 }
 
+// ---------------------------------------------------------------- relatórios
+
+async function linhasRelatorio(projeto, lancamentos) {
+  const d = await dashboard(projeto);
+  const linhas = [
+    { texto: 'Relatório financeiro resumido', tamanho: 16, fonte: 'negrito' },
+    { texto: `${projeto.codigo} - ${projeto.titulo}`, tamanho: 11, fonte: 'negrito' },
+    { texto: `Vigência: ${projeto.vigencia_inicio} a ${projeto.vigencia_fim}   Fonte: ${projeto.fonte_recursos}` },
+    { texto: `Gerado em: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}` },
+    { texto: '' },
+    { texto: 'Resumo', tamanho: 12, fonte: 'negrito' },
+    { texto: `Orçamento aprovado: ${brl(d.orcamentoPrevisto)}` },
+    { texto: `Receita realizada:  ${brl(d.receitaTotal)}` },
+    { texto: `Despesa realizada:  ${brl(d.despesaTotal)}` },
+    { texto: `Saldo disponível:   ${brl(d.saldoDisponivel)}` },
+    { texto: '' },
+    { texto: 'Execução por rubrica', tamanho: 12, fonte: 'negrito' },
+    { texto: `${'Rubrica'.padEnd(30)}${'Orçado'.padStart(15)}${'Executado'.padStart(15)}${'Previsto'.padStart(15)}${'Saldo'.padStart(15)}`, tamanho: 8, fonte: 'mono' },
+  ];
+  for (const r of d.rubricas) {
+    for (const item of [r, ...r.subrubricas]) {
+      const nome = (item.rubricaPaiId ? `  ${item.nome}` : item.nome).slice(0, 29).padEnd(30);
+      const marca = item.alerta ? (item.alerta.nivel === 'CRITICO' ? ' !!' : ' !') : '';
+      linhas.push({
+        texto: `${nome}${brl(item.orcamento).padStart(15)}${brl(item.executado).padStart(15)}${brl(item.previsto).padStart(15)}${brl(item.saldo).padStart(15)}${marca}`,
+        tamanho: 8,
+        fonte: 'mono',
+      });
+    }
+  }
+  linhas.push({ texto: '(!) próxima do limite   (!!) saldo insuficiente', tamanho: 8 });
+  linhas.push({ texto: '' });
+  linhas.push({ texto: 'Lançamentos', tamanho: 12, fonte: 'negrito' });
+  linhas.push({ texto: `${'Data'.padEnd(11)}${'Tipo'.padEnd(8)}${'Descrição'.padEnd(42)}${'Situação'.padEnd(11)}${'Total'.padStart(16)}`, tamanho: 8, fonte: 'mono' });
+  for (const l of lancamentos) {
+    linhas.push({
+      texto: `${l.data.padEnd(11)}${l.tipo.slice(0, 7).padEnd(8)}${l.descricao.slice(0, 41).padEnd(42)}${l.situacao.padEnd(11)}${brl(l.valor_total).padStart(16)}`,
+      tamanho: 8,
+      fonte: 'mono',
+    });
+  }
+  return linhas;
+}
+
+function csvRelatorio(lancamentos) {
+  const celula = (v) => {
+    let s = v == null ? '' : String(v);
+    if (/^[=+\-@]/.test(s)) s = `'${s}`; // evita que o Excel interprete o texto como fórmula
+    return /[;"\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const decimal = (v) => v.toFixed(2).replace('.', ',');
+  const linhas = [['Data', 'Tipo', 'Descrição', 'Rubrica', 'Quantidade', 'Valor unitário', 'Valor total', 'Situação', 'Criado por', 'Criado em']];
+  for (const l of lancamentos) {
+    linhas.push([l.data, l.tipo, l.descricao, l.rubrica_nome || '', String(l.quantidade).replace('.', ','), decimal(l.valor_unitario),
+      decimal(l.valor_total), l.situacao, l.criado_por_nome, iso(l.criado_em)]);
+  }
+  // BOM + ";" para abrir corretamente no Excel/LibreOffice em pt-BR.
+  return Buffer.from('﻿' + linhas.map((linha) => linha.map(celula).join(';')).join('\r\n') + '\r\n', 'utf8');
+}
+
 // -------------------------------------------------------------------- rotas
 
 const rotas = [];
@@ -816,6 +876,17 @@ rota('GET', '/projetos/:id/historico', async ({ usuario, params }) => {
     [projeto.id],
   );
   return { status: 200, corpo: rows.map(historicoParaResposta) };
+});
+
+rota('GET', '/projetos/:id/relatorio', async ({ usuario, params, query: q }) => {
+  const projeto = await exigirPermissao(usuario, idDaRota(params.id), 'ler');
+  const formato = q.get('formato') || 'pdf';
+  if (formato !== 'pdf' && formato !== 'csv') throw new HttpError(422, 'Formato inválido: use pdf ou csv');
+  const lancamentos = await listarLancamentos(projeto.id, q, null);
+  if (formato === 'pdf') {
+    return { arquivo: { conteudo: gerarPdf(await linhasRelatorio(projeto, lancamentos)), tipo: 'application/pdf', nome: `relatorio-${projeto.codigo}.pdf` } };
+  }
+  return { arquivo: { conteudo: csvRelatorio(lancamentos), tipo: 'text/csv; charset=utf-8', nome: `lancamentos-${projeto.codigo}.csv` } };
 });
 
 // ------------------------------------------------------------------ servidor
