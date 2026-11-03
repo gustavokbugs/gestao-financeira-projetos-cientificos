@@ -313,6 +313,14 @@ rota('GET', '/auth/me', async ({ usuario }) => ({
   corpo: { id: usuario.id, nome: usuario.nome, email: usuario.email, podeCriarProjetos: usuario.pode_criar_projetos },
 }));
 
+rota('GET', '/projetos', async ({ usuario }) => {
+  const { rows } = await query(
+    'SELECT p.*, m.papel FROM projetos p JOIN membros m ON m.projeto_id = p.id WHERE m.usuario_id = $1 ORDER BY p.id',
+    [usuario.id],
+  );
+  return { status: 200, corpo: rows.map(projetoParaResposta) };
+});
+
 // ------------------------------------------------------------------ servidor
 
 const ROTAS_PUBLICAS = new Set([`${PREFIXO}/status`, `${PREFIXO}/auth/login`]);
