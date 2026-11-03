@@ -38,5 +38,25 @@ services:
       driver: json-file
       options: { max-size: "10m", max-file: "5" }
 
+  # Proxy HTTPS na frente da API. Gera e renova o certificado sozinho.
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_ENDERECO: ${SITE_ENDERECO:?defina SITE_ENDERECO no .env}
+      TLS: ${TLS:-internal}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-dados:/data
+      - caddy-config:/config
+    depends_on:
+      - api
+    logging: *logs
+
 volumes:
   dados-postgres:
+  caddy-dados:
+  caddy-config:
