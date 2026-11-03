@@ -414,6 +414,32 @@ rota('GET', '/projetos', async ({ usuario }) => {
   return { status: 200, corpo: rows.map(projetoParaResposta) };
 });
 
+rota('POST', '/projetos', async ({ req, usuario }) => {
+  if (!usuario.pode_criar_projetos) throw new HttpError(403, 'Seu usuário não pode cadastrar projetos');
+  const d = await lerJson(req);
+  validarProjeto(d);
+  const projeto = await transacao(async (c) => {
+    const { rows: [inserido] } = await c.query(
+      `INSERT INTO projetos (codigo, titulo, descricao, vigencia_inicio, vigencia_fim, fonte_recursos, responsaveis, orcamento_aprovado)
+       VALUES (COALESCE($1, 'TEMP-' || gen_random_uuid()), $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+      [d.codigo ? String(d.codigo).trim() : null, d.titulo.trim(), d.descricao ? String(d.descricao) : '', d.vigenciaInicio, d.vigenciaFim,
+        d.fonteRecursos.trim(), JSON.stringify(d.responsaveis || [{ nome: usuario.nome, funcao: 'Coordenador(a)' }]), d.orcamentoAprovado],
+    );
+    let p = inserido;
+    if (!d.codigo) {
+      // Código automático no formato PESQ-AAAA-NNN, usando o id gerado.
+      ({ rows: [p] } = await c.query(
+        `UPDATE projetos SET codigo = 'PESQ-' || to_char(now(), 'YYYY') || '-' || lpad(id::text, 3, '0') WHERE id = $1 RETURNING *`,
+        [inserido.id],
+      ));
+    }
+    await c.query('INSERT INTO membros (usuario_id, projeto_id, papel) VALUES ($1, $2, $3)', [usuario.id, p.id, 'coordenador']);
+    await registrarHistorico(c, p.id, 'projeto', p.id, 'CRIACAO', usuario);
+    return { ...p, papel: 'coordenador' };
+  });
+  return { status: 201, corpo: projetoParaResposta(projeto) };
+});
+
 rota('GET', '/projetos/:id', async ({ usuario, params }) => {
   const projeto = await exigirPermissao(usuario, idDaRota(params.id), 'ler');
   return { status: 200, corpo: projetoParaResposta(projeto) };
