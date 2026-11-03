@@ -76,3 +76,13 @@ O projeto 1 reproduz a planilha de orçamento do enunciado; o projeto 3, os valo
 
 Para testar o tratamento de falhas, suba a API com `MOCK_DELAY_MS=1500` (atraso) ou `MOCK_FAIL_RATE=0.3` (30% das
 requisições falham com 503), ou pare a API (`docker compose stop api`), ou ative o modo avião no emulador.
+
+## Gerar APK e AAB
+
+```bash
+cd android
+./gradlew assembleDebug    # APK de teste: app/build/outputs/apk/debug/app-debug.apk
+./gradlew bundleRelease    # AAB: app/build/outputs/bundle/release/ (precisa de keystore de assinatura)
+```
+
+O build release só aceita **HTTPS** (`network_security_config`) e usa `apiUrlRelease` de `android/gradle.properties`.
