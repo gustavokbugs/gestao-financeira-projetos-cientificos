@@ -1,0 +1,8 @@
+# SITE_ENDERECO: o domínio (ex.: gestao.seudominio.com) ou o IP (ex.: 192.168.0.50), sem "https://"
+# TLS: "internal" (certificado próprio do Caddy) ou um e-mail (Let's Encrypt, exige domínio e portas 80/443 abertas)
+{$SITE_ENDERECO} {
+	tls {$TLS}
+	encode gzip
+	reverse_proxy api:3000
+	header -Server
+}
