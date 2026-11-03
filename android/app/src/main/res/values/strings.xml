@@ -2,6 +2,16 @@
 <resources>
     <string name="app_name">Gestão Financeira</string>
 
+    <!-- Login -->
+    <string name="login_titulo">Gestão financeira de projetos científicos</string>
+    <string name="login_subtitulo">Entre com a conta fornecida pela coordenação do projeto.</string>
+    <string name="email">E-mail</string>
+    <string name="senha">Senha</string>
+    <string name="entrar">Entrar</string>
+    <string name="erro_email_invalido">Informe um e-mail válido</string>
+    <string name="erro_senha_vazia">Informe a senha</string>
+    <string name="sessao_expirada">Sua sessão expirou. Entre novamente.</string>
+
     <!-- Projetos -->
     <string name="selecione_projeto">Selecione o projeto</string>
     <string name="nenhum_projeto">Você ainda não participa de nenhum projeto.</string>
