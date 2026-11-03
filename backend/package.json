@@ -1,0 +1,19 @@
+{
+  "name": "gestao-financeira-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API REST do microsserviço de gestão financeira de projetos científicos (PostgreSQL).",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "seed": "node src/seed.js",
+    "start:lento": "MOCK_DELAY_MS=1500 node src/server.js",
+    "start:instavel": "MOCK_FAIL_RATE=0.3 node src/server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "pg": "8.23.1"
+  }
+}
