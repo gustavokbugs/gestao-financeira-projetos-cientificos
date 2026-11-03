@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Release: somente HTTPS. A versão debug (src/debug) libera HTTP apenas para a API local (docker compose). -->
+<!-- Release: somente HTTPS.
+     A linha SERVIDOR_CA é ativada por servidor/exportar-certificado.sh quando o servidor usa
+     certificado próprio (TLS=internal); ela faz o app confiar na autoridade do Caddy do servidor. -->
 <network-security-config>
-    <base-config cleartextTrafficPermitted="false" />
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+            <!-- SERVIDOR_CA <certificates src="@raw/servidor_ca" /> SERVIDOR_CA -->
+        </trust-anchors>
+    </base-config>
 </network-security-config>
