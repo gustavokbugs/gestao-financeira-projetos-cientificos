@@ -16,6 +16,13 @@ public class Dashboard {
     public List<Rubrica> rubricas;
     public List<Alerta> alertas;
     public String atualizadoEm;
+    public RegrasAlerta regrasAlerta;
+
+    /** Limites usados pelo servidor para os alertas (GP-10), em percentual do orçamento. */
+    public static class RegrasAlerta {
+        public Double atencaoPercentual;
+        public Double criticoPercentual;
+    }
 
     public static class Participacao {
         public long rubricaId;
