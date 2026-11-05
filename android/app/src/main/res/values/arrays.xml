@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Cores das fatias do gráfico de participação (variantes claras em values-night). -->
+    <array name="paleta_grafico">
+        <item>@color/grafico_1</item>
+        <item>@color/grafico_2</item>
+        <item>@color/grafico_3</item>
+        <item>@color/grafico_4</item>
+        <item>@color/grafico_5</item>
+        <item>@color/grafico_6</item>
+        <item>@color/grafico_7</item>
+        <item>@color/grafico_8</item>
+    </array>
+</resources>

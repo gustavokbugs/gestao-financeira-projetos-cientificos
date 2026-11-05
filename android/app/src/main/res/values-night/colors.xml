@@ -12,4 +12,12 @@
     <color name="fundo_alerta_critico">#4A1418</color>
     <color name="texto_alerta_critico">#FFB4B4</color>
     <color name="cancelado">#A0A0A0</color>
+    <color name="grafico_1">#9EC3FF</color>
+    <color name="grafico_2">#FFB866</color>
+    <color name="grafico_3">#7FD3A3</color>
+    <color name="grafico_4">#F48FB1</color>
+    <color name="grafico_5">#C7A8F0</color>
+    <color name="grafico_6">#6FD6E0</color>
+    <color name="grafico_7">#E0C060</color>
+    <color name="grafico_8">#B0BEC5</color>
 </resources>
