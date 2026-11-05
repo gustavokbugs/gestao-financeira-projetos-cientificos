@@ -173,4 +173,10 @@ public final class Formatos {
             default: return campo;
         }
     }
+
+    public static String tamanhoArquivo(long bytes) {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return String.format(PT_BR, "%.0f KB", bytes / 1024.0);
+        return String.format(PT_BR, "%.1f MB", bytes / (1024.0 * 1024.0));
+    }
 }
