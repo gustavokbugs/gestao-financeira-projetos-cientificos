@@ -14,6 +14,22 @@ android {
         versionName = '0.1.0'
     }
 
+    // Assinatura do release (AAB). As credenciais ficam em android/keystore.properties, fora do git.
+    // Sem o arquivo, o bundleRelease gera um AAB sem assinatura. Ver README, "Gerar APK e AAB".
+    def arquivoAssinatura = rootProject.file('keystore.properties')
+    if (arquivoAssinatura.exists()) {
+        def assinatura = new Properties()
+        arquivoAssinatura.withInputStream { assinatura.load(it) }
+        signingConfigs {
+            release {
+                storeFile = rootProject.file(assinatura['storeFile'])
+                storePassword = assinatura['storePassword']
+                keyAlias = assinatura['keyAlias']
+                keyPassword = assinatura['keyPassword']
+            }
+        }
+    }
+
     buildTypes {
         debug {
             // Padrão: API local (docker compose) vista pelo emulador em 10.0.2.2. Ver gradle.properties.
@@ -22,6 +38,7 @@ android {
         release {
             // URL HTTPS da API na nuvem. Ver gradle.properties e docs/deploy-nuvem.md.
             buildConfigField 'String', 'API_BASE_URL', "\"${project.property('apiUrlRelease')}\""
+            if (arquivoAssinatura.exists()) signingConfig = signingConfigs.release
             minifyEnabled = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
