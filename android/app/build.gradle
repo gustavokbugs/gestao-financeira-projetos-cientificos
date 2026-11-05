@@ -12,6 +12,7 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = '0.1.0'
+        testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     // Assinatura do release (AAB). As credenciais ficam em android/keystore.properties, fora do git.
@@ -65,4 +66,12 @@ dependencies {
     implementation libs.exifinterface
 
     testImplementation libs.junit
+
+    androidTestImplementation libs.androidx.test.core
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.rules
+    androidTestImplementation libs.androidx.test.junit
+    androidTestImplementation libs.espresso.core
+    androidTestImplementation libs.espresso.contrib
+    androidTestImplementation libs.okhttp.mockwebserver
 }
