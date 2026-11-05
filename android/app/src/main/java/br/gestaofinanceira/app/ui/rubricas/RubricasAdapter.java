@@ -1,4 +1,4 @@
-package br.gestaofinanceira.app.ui.dashboard;
+package br.gestaofinanceira.app.ui.rubricas;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -17,17 +16,30 @@ import java.util.List;
 import java.util.Map;
 
 import br.gestaofinanceira.app.R;
-import br.gestaofinanceira.app.data.remote.dto.Alerta;
 import br.gestaofinanceira.app.data.remote.dto.Rubrica;
+import br.gestaofinanceira.app.ui.common.Cores;
 import br.gestaofinanceira.app.ui.common.Formatos;
 
-/** Lista rubricas e subrubricas com orçado x executado, saldo e alerta (GP-06 e GP-10). */
-class RubricasAdapter extends RecyclerView.Adapter<RubricasAdapter.ViewHolder> {
+/** Lista rubricas e subrubricas com orçado x executado, saldo e alerta (GP-03, GP-06 e GP-10). */
+public class RubricasAdapter extends RecyclerView.Adapter<RubricasAdapter.ViewHolder> {
+
+    public interface AoSelecionar {
+        void selecionada(Rubrica rubrica);
+    }
 
     private final List<Rubrica> itens = new ArrayList<>();
+    private final AoSelecionar aoSelecionar;
     private Map<Long, Double> participacao;
 
-    void atualizar(List<Rubrica> rubricas, Map<Long, Double> participacaoPorRubrica) {
+    public RubricasAdapter() {
+        this(null);
+    }
+
+    public RubricasAdapter(AoSelecionar aoSelecionar) {
+        this.aoSelecionar = aoSelecionar;
+    }
+
+    public void atualizar(List<Rubrica> rubricas, Map<Long, Double> participacaoPorRubrica) {
         itens.clear();
         for (Rubrica r : rubricas) {
             itens.add(r);
@@ -68,22 +80,22 @@ class RubricasAdapter extends RecyclerView.Adapter<RubricasAdapter.ViewHolder> {
         double percentual = r.percentualComprometido == null ? 0 : r.percentualComprometido;
         h.progresso.setProgressCompat((int) Math.min(100, Math.round(percentual)), false);
 
-        int cor;
-        if (r.alerta != null && Alerta.CRITICO.equals(r.alerta.nivel)) {
-            cor = R.color.alerta_critico;
-        } else if (r.alerta != null && Alerta.ATENCAO.equals(r.alerta.nivel)) {
-            cor = R.color.alerta_atencao;
-        } else {
-            cor = R.color.normal;
-        }
-        h.progresso.setIndicatorColor(ContextCompat.getColor(ctx, cor));
+        int cor = Cores.alerta(ctx, r.alerta);
+        h.progresso.setIndicatorColor(cor);
 
         if (r.alerta != null) {
             h.alerta.setVisibility(View.VISIBLE);
             h.alerta.setText(r.alerta.mensagem);
-            h.alerta.setTextColor(ContextCompat.getColor(ctx, cor));
+            h.alerta.setTextColor(cor);
         } else {
             h.alerta.setVisibility(View.GONE);
+        }
+
+        if (aoSelecionar != null) {
+            h.itemView.setOnClickListener(v -> aoSelecionar.selecionada(r));
+        } else {
+            h.itemView.setOnClickListener(null);
+            h.itemView.setClickable(false);
         }
     }
 
