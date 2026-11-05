@@ -84,4 +84,8 @@ public interface ApiService {
     @GET("comprovantes/{id}")
     Call<ResponseBody> baixarComprovante(@Path("id") long comprovanteId);
 
+    // GP-07 / GP-09
+    @GET("projetos/{id}/historico")
+    Call<List<Movimentacao>> historico(@Path("id") long projetoId);
+
 }
