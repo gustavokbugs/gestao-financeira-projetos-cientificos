@@ -89,18 +89,18 @@ O build release só aceita **HTTPS** (`network_security_config`) e usa `apiUrlRe
 
 ## Situação dos requisitos
 
-| Código | Requisito | Situação |
-|---|---|---|
-| GP-01 | Login, seleção de projeto e perfis | ✅ App + API |
-| GP-02 | Cadastro e consulta de projetos | 🟡 API pronta; telas pendentes |
-| GP-03 | Rubricas e subrubricas | 🟡 API pronta; telas pendentes |
-| GP-04 | Lançamento de receitas e despesas | 🟡 API pronta; telas pendentes |
-| GP-05 | Comprovantes (foto ou arquivo) | 🟡 API pronta; telas pendentes |
-| GP-06 | Dashboard por projeto | ✅ App + API (falta o gráfico de participação) |
-| GP-07 | Filtros, detalhamento e histórico | 🟡 API pronta; telas pendentes |
-| GP-08 | Relatórios PDF e planilha | 🟡 API pronta; telas pendentes |
-| GP-09 | Validações, confirmação e autoria | 🟡 API pronta; confirmações nas telas pendentes |
-| GP-10 | Alertas de rubrica | ✅ App + API |
+| Código | Requisito | Situação | Onde no app |
+|---|---|---|---|
+| GP-01 | Login, seleção de projeto e perfis | ✅ | Login → Projetos; ações de escrita escondidas conforme o perfil (`Permissoes`) |
+| GP-02 | Cadastro e consulta de projetos | ✅ | Menu do dashboard → Projeto (detalhe/edição); "Novo projeto" na lista |
+| GP-03 | Rubricas e subrubricas | ✅ | Menu do dashboard → Rubricas (criar, editar, ver lançamentos) |
+| GP-04 | Lançamento de receitas e despesas | ✅ | Lançamentos → Novo lançamento / Editar / Cancelar |
+| GP-05 | Comprovantes (foto ou arquivo) | ✅ | Detalhe do lançamento: câmera, galeria ou PDF; tocar abre o arquivo |
+| GP-06 | Dashboard por projeto | ✅ | Cartões, previsto × executado, gráfico de participação, resumo financeiro |
+| GP-07 | Filtros, detalhamento e histórico | ✅ | Filtros de período, rubrica, tipo, situação e busca; detalhe; Histórico |
+| GP-08 | Relatórios PDF e planilha | ✅ | "Download do relatório" (dashboard) e menu da lista (com os filtros) |
+| GP-09 | Validações, confirmação e autoria | ✅ | Validação local + erros 422 nos campos, diálogo de confirmação, autoria e histórico |
+| GP-10 | Alertas de rubrica | ✅ | Dashboard, rubricas e aviso logo após salvar um lançamento |
 
 Detalhes e critérios de aceite em [docs/requisitos.md](docs/requisitos.md). O que falta, e em que ordem, está em [docs/gaps-e-plano.md](docs/gaps-e-plano.md).
 
