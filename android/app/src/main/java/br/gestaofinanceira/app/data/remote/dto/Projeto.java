@@ -19,5 +19,13 @@ public class Projeto {
     public static class Responsavel {
         public String nome;
         public String funcao;
+
+        public Responsavel() {
+        }
+
+        public Responsavel(String nome, String funcao) {
+            this.nome = nome;
+            this.funcao = funcao;
+        }
     }
 }
