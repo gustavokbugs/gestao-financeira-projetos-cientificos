@@ -24,6 +24,7 @@
 
         <activity
             android:name=".ui.login.LoginActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -32,12 +33,18 @@
             </intent-filter>
         </activity>
 
+        <!--
+            configChanges: ao girar a tela a Activity não é recriada, então não perde o que foi
+            digitado nem refaz as chamadas à API (o layout se adapta sozinho).
+        -->
         <activity
             android:name=".ui.projetos.ProjetosActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
             android:exported="false" />
 
         <activity
             android:name=".ui.dashboard.DashboardActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
             android:exported="false"
             android:parentActivityName=".ui.projetos.ProjetosActivity" />
 
