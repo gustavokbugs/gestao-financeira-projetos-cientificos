@@ -20,7 +20,9 @@ public final class Formatos {
     }
 
     public static String moeda(BigDecimal valor) {
-        return NumberFormat.getCurrencyInstance(PT_BR).format(valor == null ? BigDecimal.ZERO : valor);
+        String texto = NumberFormat.getCurrencyInstance(PT_BR).format(valor == null ? BigDecimal.ZERO : valor);
+        // Android 8 (ICU antigo) formata "R$1.600,50" sem espaço; os mais novos, "R$ 1.600,50".
+        return texto.replaceFirst("R\\$(?=\\d)", "R\\$\u00a0");
     }
 
     public static String percentual(Double valor) {

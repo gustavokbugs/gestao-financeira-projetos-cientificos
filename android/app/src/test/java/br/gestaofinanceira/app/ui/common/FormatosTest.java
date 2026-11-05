@@ -21,6 +21,12 @@ public class FormatosTest {
     }
 
     @Test
+    public void moedaSempreTemEspacoDepoisDoSimbolo() {
+        // Em qualquer versão do Android/ICU: nunca "R$1.600,50".
+        assertEquals(false, Formatos.moeda(new BigDecimal("1600.5")).matches(".*R\\$\\d.*"));
+    }
+
+    @Test
     public void lerNumeroAceitaFormatosComuns() {
         assertEquals(0, new BigDecimal("1234.56").compareTo(Formatos.lerNumero("1.234,56")));
         assertEquals(0, new BigDecimal("1234.56").compareTo(Formatos.lerNumero("1234,56")));
