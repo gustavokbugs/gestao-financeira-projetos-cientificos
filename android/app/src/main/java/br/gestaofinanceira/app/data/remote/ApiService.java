@@ -74,4 +74,14 @@ public interface ApiService {
     @PUT("lancamentos/{id}")
     Call<Lancamento> editarLancamento(@Path("id") long lancamentoId, @Body LancamentoRequest corpo);
 
+    // GP-05: corpo binário; o Content-Type vem do RequestBody
+    @POST("lancamentos/{id}/comprovantes")
+    Call<Comprovante> enviarComprovante(@Path("id") long lancamentoId,
+                                        @Header("X-Nome-Arquivo") String nomeArquivoCodificado,
+                                        @Body RequestBody arquivo);
+
+    @Streaming
+    @GET("comprovantes/{id}")
+    Call<ResponseBody> baixarComprovante(@Path("id") long comprovanteId);
+
 }
