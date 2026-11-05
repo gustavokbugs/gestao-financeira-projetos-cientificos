@@ -37,6 +37,12 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name=".ui.lancamentos.LancamentoFormActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Entrega relatórios e comprovantes a outros apps sem permissão de armazenamento (GP-05, GP-08). -->
         <provider
             android:name="androidx.core.content.FileProvider"

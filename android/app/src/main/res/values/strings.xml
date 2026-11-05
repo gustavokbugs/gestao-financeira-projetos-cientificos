@@ -68,6 +68,39 @@
         <item quantity="other">%d comprovantes</item>
     </plurals>
 
+    <!-- Lançamento: formulário -->
+    <string name="editar_lancamento">Editar lançamento</string>
+    <string name="tipo">Tipo</string>
+    <string name="data">Data</string>
+    <string name="descricao">Descrição</string>
+    <string name="rubrica">Rubrica</string>
+    <string name="rubrica_opcional">Rubrica (opcional)</string>
+    <string name="quantidade">Quantidade</string>
+    <string name="valor_unitario">Valor unitário</string>
+    <string name="valor_total">Valor total</string>
+    <string name="situacao">Situação</string>
+    <string name="previsto">Previsto</string>
+    <string name="realizado">Realizado</string>
+    <string name="total_formato">Total: %1$s</string>
+    <string name="total_calculado_servidor">Estimativa. O valor oficial é calculado pelo servidor.</string>
+    <string name="salvar">Salvar</string>
+    <string name="confirmar_lancamento">Confirmar lançamento</string>
+    <string name="confirmar_alteracao">Confirmar alteração</string>
+    <string name="confirmar_lancamento_formato">Tipo: %1$s\nData: %2$s\nDescrição: %3$s\nRubrica: %4$s\nQuantidade: %5$s × %6$s\nTotal: %7$s\nSituação: %8$s</string>
+    <string name="conflito_titulo">Alterado por outra pessoa</string>
+    <string name="recarregar">Recarregar</string>
+    <string name="lancamento_salvo">Lançamento salvo</string>
+    <string name="lancamento_salvo_formato">Valor total registrado pelo servidor: %1$s.</string>
+    <string name="alerta_rubrica_formato">Rubrica %1$s: %2$s</string>
+    <string name="atencao_limite">Salvo · rubrica próxima do limite</string>
+    <string name="atencao_saldo_insuficiente">Salvo · saldo insuficiente na rubrica</string>
+    <string name="anexar_comprovante">Anexar comprovante</string>
+    <string name="ok">OK</string>
+    <string name="descartar_titulo">Descartar alterações?</string>
+    <string name="descartar_mensagem">O que foi digitado será perdido.</string>
+    <string name="descartar">Descartar</string>
+    <string name="continuar_editando">Continuar editando</string>
+
     <!-- Comum -->
     <string name="resposta_invalida">Resposta inesperada do servidor. Tente novamente.</string>
     <string name="tentar_novamente">Tentar novamente</string>
