@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
@@ -21,7 +23,9 @@ import br.gestaofinanceira.app.R;
 import br.gestaofinanceira.app.data.remote.ApiErros;
 import br.gestaofinanceira.app.data.remote.dto.Projeto;
 import br.gestaofinanceira.app.ui.common.EstadoTela;
+import br.gestaofinanceira.app.ui.common.ProjetoAtual;
 import br.gestaofinanceira.app.ui.dashboard.DashboardActivity;
+import br.gestaofinanceira.app.ui.projeto.ProjetoFormActivity;
 import br.gestaofinanceira.app.ui.login.LoginActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,6 +59,20 @@ public class ProjetosActivity extends AppCompatActivity {
         swipe.setOnRefreshListener(this::carregar);
         estado = new EstadoTela(findViewById(R.id.estado), this::carregar);
 
+        // GP-02: só usuários autorizados pelo servidor cadastram projetos.
+        ExtendedFloatingActionButton novo = findViewById(R.id.novo);
+        if (GestaoFinanceiraApp.de(this).getSessao().podeCriarProjetos()) {
+            novo.setVisibility(View.VISIBLE);
+            novo.setOnClickListener(v -> startActivity(new Intent(this, ProjetoFormActivity.class)));
+        }
+
+        carregar();
+    }
+
+    /** Recarrega ao voltar: um projeto pode ter sido criado ou editado (título, vigência). */
+    @Override
+    protected void onRestart() {
+        super.onRestart();
         carregar();
     }
 
@@ -99,11 +117,7 @@ public class ProjetosActivity extends AppCompatActivity {
     }
 
     private void abrirDashboard(Projeto projeto) {
-        Intent intent = new Intent(this, DashboardActivity.class);
-        intent.putExtra(DashboardActivity.EXTRA_PROJETO_ID, projeto.id);
-        intent.putExtra(DashboardActivity.EXTRA_PROJETO_TITULO, projeto.titulo);
-        intent.putExtra(DashboardActivity.EXTRA_PAPEL, projeto.papel);
-        startActivity(intent);
+        startActivity(ProjetoAtual.de(projeto).colocar(new Intent(this, DashboardActivity.class)));
     }
 
     @Override
