@@ -61,4 +61,17 @@ public interface ApiService {
     @PUT("rubricas/{id}")
     Call<Rubrica> editarRubrica(@Path("id") long rubricaId, @Body RubricaRequest corpo);
 
+    // GP-04 / GP-07: filtros tipo, rubricaId, situacao, de, ate, busca, pagina, tamanho
+    @GET("projetos/{id}/lancamentos")
+    Call<PaginaLancamentos> lancamentos(@Path("id") long projetoId, @QueryMap Map<String, String> filtros);
+
+    @POST("projetos/{id}/lancamentos")
+    Call<Lancamento> criarLancamento(@Path("id") long projetoId, @Body LancamentoRequest corpo);
+
+    @GET("lancamentos/{id}")
+    Call<Lancamento> lancamento(@Path("id") long lancamentoId);
+
+    @PUT("lancamentos/{id}")
+    Call<Lancamento> editarLancamento(@Path("id") long lancamentoId, @Body LancamentoRequest corpo);
+
 }
