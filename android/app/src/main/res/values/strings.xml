@@ -36,6 +36,13 @@
     <string name="participacao_formato">%1$s das despesas</string>
     <string name="atualizado_em_formato">Atualizado em %1$s</string>
 
+    <!-- Navegação -->
+    <string name="lancamentos">Lançamentos</string>
+    <string name="lancamento">Lançamento</string>
+    <string name="projeto">Projeto</string>
+    <string name="historico">Histórico</string>
+    <string name="download_relatorio">Download do relatório</string>
+
     <!-- Comum -->
     <string name="resposta_invalida">Resposta inesperada do servidor. Tente novamente.</string>
     <string name="tentar_novamente">Tentar novamente</string>
