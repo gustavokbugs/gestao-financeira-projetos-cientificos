@@ -75,6 +75,11 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name=".ui.historico.HistoricoActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:exported="false" />
+
         <!-- Entrega relatórios e comprovantes a outros apps sem permissão de armazenamento (GP-05, GP-08). -->
         <provider
             android:name="androidx.core.content.FileProvider"

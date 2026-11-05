@@ -175,6 +175,9 @@
     <string name="confirmar_projeto">Confirmar cadastro</string>
     <string name="confirmar_projeto_formato">%1$s\nVigência: %2$s a %3$s\nFonte: %4$s\nOrçamento aprovado: %5$s\nResponsáveis: %6$d</string>
 
+    <!-- Histórico -->
+    <string name="historico_vazio">Nenhuma movimentação registrada.</string>
+
     <!-- Relatórios -->
     <string name="relatorio_titulo">Exportar relatório</string>
     <string name="relatorio_com_filtros">com os filtros atuais</string>
