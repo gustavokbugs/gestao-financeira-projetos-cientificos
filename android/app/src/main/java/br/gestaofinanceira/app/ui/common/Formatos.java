@@ -98,4 +98,79 @@ public final class Formatos {
                 .multiply(valorUnitario.setScale(2, RoundingMode.HALF_UP))
                 .setScale(2, RoundingMode.HALF_UP);
     }
+
+    public static String tipo(String tipo) {
+        if ("RECEITA".equals(tipo)) return "Receita";
+        if ("DESPESA".equals(tipo)) return "Despesa";
+        return tipo == null ? "" : tipo;
+    }
+
+    public static String situacao(String situacao) {
+        if (situacao == null) return "";
+        switch (situacao) {
+            case "PREVISTO":
+                return "Previsto";
+            case "REALIZADO":
+                return "Realizado";
+            case "CANCELADO":
+                return "Cancelado";
+            default:
+                return situacao;
+        }
+    }
+
+    public static String acao(String acao) {
+        if (acao == null) return "";
+        switch (acao) {
+            case "CRIACAO":
+                return "Criação";
+            case "ALTERACAO":
+                return "Alteração";
+            case "CANCELAMENTO":
+                return "Cancelamento";
+            case "ANEXO":
+                return "Comprovante anexado";
+            default:
+                return acao;
+        }
+    }
+
+    public static String entidade(String entidade) {
+        if (entidade == null) return "";
+        switch (entidade) {
+            case "lancamento":
+                return "Lançamento";
+            case "rubrica":
+                return "Rubrica";
+            case "projeto":
+                return "Projeto";
+            default:
+                return entidade;
+        }
+    }
+
+    /** Nome legível do campo alterado, para o histórico. */
+    public static String campo(String campo) {
+        if (campo == null) return "";
+        switch (campo) {
+            case "tipo": return "Tipo";
+            case "data": return "Data";
+            case "descricao": return "Descrição";
+            case "rubricaId": return "Rubrica";
+            case "quantidade": return "Quantidade";
+            case "valorUnitario": return "Valor unitário";
+            case "valorTotal": return "Valor total";
+            case "situacao": return "Situação";
+            case "comprovante": return "Comprovante";
+            case "nome": return "Nome";
+            case "orcamento": return "Orçamento";
+            case "titulo": return "Título";
+            case "vigenciaInicio": return "Início da vigência";
+            case "vigenciaFim": return "Fim da vigência";
+            case "fonteRecursos": return "Fonte de recursos";
+            case "responsaveis": return "Responsáveis";
+            case "orcamentoAprovado": return "Orçamento aprovado";
+            default: return campo;
+        }
+    }
 }
