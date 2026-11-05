@@ -83,6 +83,7 @@ requisições falham com 503), ou pare a API (`docker compose stop api`), ou ati
 cd android
 export JAVA_HOME=~/android-studio/jbr   # se o JDK do sistema não tiver javac (ex.: só o JRE 25)
 ./gradlew testDebugUnitTest  # testes unitários (JUnit)
+./gradlew connectedDebugAndroidTest  # testes Espresso no emulador (ver docs/testes.md)
 ./gradlew assembleDebug      # APK de teste: app/build/outputs/apk/debug/app-debug.apk
 ./gradlew bundleRelease      # AAB: app/build/outputs/bundle/release/app-release.aab
 ```
