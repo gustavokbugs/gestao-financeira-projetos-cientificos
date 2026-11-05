@@ -127,6 +127,24 @@
     <string name="lancamento_cancelado">Lançamento cancelado.</string>
     <string name="por_formato">por %1$s</string>
 
+    <!-- Rubricas -->
+    <string name="rubricas_dica">Toque em uma rubrica para ver os lançamentos dela.</string>
+    <string name="rubricas_dica_coordenador">Toque em uma rubrica para ver os lançamentos ou editá-la.</string>
+    <string name="nenhuma_rubrica">Nenhuma rubrica cadastrada.</string>
+    <string name="nova_rubrica">Nova rubrica</string>
+    <string name="editar_rubrica">Editar rubrica</string>
+    <string name="ver_lancamentos">Ver lançamentos</string>
+    <string name="nome_rubrica">Nome (ex.: Diárias, Passagens)</string>
+    <string name="orcamento">Orçamento</string>
+    <string name="rubrica_principal">Rubrica principal</string>
+    <string name="nenhuma_principal">Nenhuma (é uma rubrica principal)</string>
+    <string name="rubrica_principal_curta">rubrica principal</string>
+    <string name="erro_nome_rubrica">Informe o nome</string>
+    <string name="erro_orcamento_rubrica">Informe um orçamento igual ou maior que zero</string>
+    <string name="confirmar_rubrica_nova_formato">Criar a rubrica \"%1$s\" com orçamento de %2$s (%3$s)?</string>
+    <string name="confirmar_rubrica_edicao_formato">Rubrica \"%1$s\" → \"%2$s\"\nOrçamento: %3$s → %4$s</string>
+    <string name="rubrica_salva">Rubrica salva.</string>
+
     <!-- Relatórios -->
     <string name="relatorio_titulo">Exportar relatório</string>
     <string name="relatorio_com_filtros">com os filtros atuais</string>
