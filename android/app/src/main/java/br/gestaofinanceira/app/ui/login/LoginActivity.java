@@ -100,7 +100,8 @@ public class LoginActivity extends AppCompatActivity {
                 carregando(false);
                 LoginResponse corpo = resposta.body();
                 if (resposta.isSuccessful() && corpo != null && corpo.token != null) {
-                    sessao.salvar(corpo.token, corpo.expiraEm, corpo.usuario.nome, corpo.usuario.email);
+                    sessao.salvar(corpo.token, corpo.expiraEm, corpo.usuario.nome, corpo.usuario.email,
+                            corpo.usuario.podeCriarProjetos);
                     abrirProjetos();
                 } else {
                     mostrarErro(ApiErros.mensagem(resposta));

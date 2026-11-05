@@ -28,6 +28,7 @@ public class SessionManager {
     private static final String CHAVE_EXPIRA_EM = "expira_em";
     private static final String CHAVE_NOME = "nome";
     private static final String CHAVE_EMAIL = "email";
+    private static final String CHAVE_PODE_CRIAR = "pode_criar_projetos";
     private static final int TAMANHO_IV = 12;
     private static final int TAMANHO_TAG = 128;
 
@@ -37,12 +38,13 @@ public class SessionManager {
         prefs = context.getSharedPreferences(ARQUIVO, Context.MODE_PRIVATE);
     }
 
-    public void salvar(String token, String expiraEm, String nome, String email) {
+    public void salvar(String token, String expiraEm, String nome, String email, boolean podeCriarProjetos) {
         prefs.edit()
                 .putString(CHAVE_TOKEN, cifrar(token))
                 .putString(CHAVE_EXPIRA_EM, expiraEm)
                 .putString(CHAVE_NOME, nome)
                 .putString(CHAVE_EMAIL, email)
+                .putBoolean(CHAVE_PODE_CRIAR, podeCriarProjetos)
                 .apply();
     }
 
@@ -73,6 +75,11 @@ public class SessionManager {
 
     public String getEmail() {
         return prefs.getString(CHAVE_EMAIL, "");
+    }
+
+    /** Vem do login: só alguns usuários podem cadastrar projetos novos (GP-02). */
+    public boolean podeCriarProjetos() {
+        return prefs.getBoolean(CHAVE_PODE_CRIAR, false);
     }
 
     public synchronized void limpar() {
