@@ -59,6 +59,8 @@ public final class Comprovantes {
         }
         byte[] jpeg = reduzir(cr, uri);
         String base = nome.contains(".") ? nome.substring(0, nome.lastIndexOf('.')) : nome;
+        // O seletor de fotos do Android informa só o número da mídia ("20"): vira "imagem-20".
+        if (base.matches("\\d+")) base = "imagem-" + base;
         return new Preparado(jpeg, "image/jpeg", base + ".jpg");
     }
 
