@@ -36,6 +36,12 @@ public class GestaoFinanceiraApp extends Application {
         return api;
     }
 
+    /** Só para testes instrumentados: aponta o app para um servidor falso (MockWebServer). */
+    @androidx.annotation.VisibleForTesting
+    public void usarApi(String baseUrl) {
+        api = ApiClient.criar(baseUrl, sessao, this::voltarParaLogin);
+    }
+
     /** Chamado quando a API responde 401: o token expirou ou foi invalidado. */
     private void voltarParaLogin() {
         new Handler(Looper.getMainLooper()).post(() -> {
