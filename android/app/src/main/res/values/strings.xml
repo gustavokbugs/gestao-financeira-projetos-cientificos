@@ -43,6 +43,31 @@
     <string name="historico">Histórico</string>
     <string name="download_relatorio">Download do relatório</string>
 
+    <!-- Lançamentos: lista e filtros -->
+    <string name="buscar_descricao">Buscar na descrição</string>
+    <string name="filtro_periodo">Período</string>
+    <string name="filtro_rubrica">Rubrica</string>
+    <string name="filtro_tipo">Tipo</string>
+    <string name="filtro_situacao">Situação</string>
+    <string name="limpar_filtros">Limpar</string>
+    <string name="todos">Todos</string>
+    <string name="todas_rubricas">Todas as rubricas</string>
+    <string name="periodo_formato">%1$s a %2$s</string>
+    <string name="carregando_rubricas">Carregando rubricas…</string>
+    <string name="nenhum_lancamento">Nenhum lançamento neste projeto.</string>
+    <string name="nenhum_lancamento_filtro">Nenhum lançamento com estes filtros.</string>
+    <string name="lancamento_detalhes_formato">%1$s · %2$s · %3$s</string>
+    <string name="sem_rubrica">Sem rubrica</string>
+    <string name="novo_lancamento">Novo lançamento</string>
+    <plurals name="lancamentos_encontrados">
+        <item quantity="one">%d lançamento</item>
+        <item quantity="other">%d lançamentos</item>
+    </plurals>
+    <plurals name="comprovantes">
+        <item quantity="one">%d comprovante</item>
+        <item quantity="other">%d comprovantes</item>
+    </plurals>
+
     <!-- Comum -->
     <string name="resposta_invalida">Resposta inesperada do servidor. Tente novamente.</string>
     <string name="tentar_novamente">Tentar novamente</string>
