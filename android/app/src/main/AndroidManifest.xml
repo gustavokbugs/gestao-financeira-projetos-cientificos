@@ -69,6 +69,12 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.projeto.ProjetoFormActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Entrega relatórios e comprovantes a outros apps sem permissão de armazenamento (GP-05, GP-08). -->
         <provider
             android:name="androidx.core.content.FileProvider"

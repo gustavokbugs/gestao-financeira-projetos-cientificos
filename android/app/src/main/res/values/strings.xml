@@ -145,6 +145,36 @@
     <string name="confirmar_rubrica_edicao_formato">Rubrica \"%1$s\" → \"%2$s\"\nOrçamento: %3$s → %4$s</string>
     <string name="rubrica_salva">Rubrica salva.</string>
 
+    <!-- Projeto -->
+    <string name="novo_projeto">Novo projeto</string>
+    <string name="editar_projeto">Editar projeto</string>
+    <string name="codigo">Código</string>
+    <string name="codigo_opcional">Código (opcional)</string>
+    <string name="codigo_ajuda">Em branco, o servidor gera um (PESQ-AAAA-NNN).</string>
+    <string name="titulo">Título</string>
+    <string name="descricao_opcional">Descrição (opcional)</string>
+    <string name="vigencia">Vigência</string>
+    <string name="inicio_vigencia">Início da vigência</string>
+    <string name="fim_vigencia">Fim da vigência</string>
+    <string name="fonte_recursos">Fonte de recursos</string>
+    <string name="orcamento_aprovado">Orçamento aprovado</string>
+    <string name="responsaveis">Responsáveis</string>
+    <string name="adicionar_responsavel">Adicionar responsável</string>
+    <string name="remover_responsavel">Remover responsável</string>
+    <string name="nome">Nome</string>
+    <string name="funcao">Função</string>
+    <string name="funcao_coordenador">Coordenador(a)</string>
+    <string name="seu_perfil">Seu perfil neste projeto</string>
+    <string name="erro_titulo">Informe o título</string>
+    <string name="erro_fonte">Informe a fonte de recursos</string>
+    <string name="erro_data">Informe a data</string>
+    <string name="erro_fim_antes_inicio">O fim deve ser depois do início</string>
+    <string name="erro_orcamento_projeto">Informe um orçamento maior que zero</string>
+    <string name="erro_responsavel_nome">Cada responsável precisa de um nome</string>
+    <string name="erro_responsavel_vazio">Informe ao menos um responsável</string>
+    <string name="confirmar_projeto">Confirmar cadastro</string>
+    <string name="confirmar_projeto_formato">%1$s\nVigência: %2$s a %3$s\nFonte: %4$s\nOrçamento aprovado: %5$s\nResponsáveis: %6$d</string>
+
     <!-- Relatórios -->
     <string name="relatorio_titulo">Exportar relatório</string>
     <string name="relatorio_com_filtros">com os filtros atuais</string>
