@@ -43,6 +43,16 @@
     <string name="historico">Histórico</string>
     <string name="download_relatorio">Download do relatório</string>
 
+    <!-- Dashboard (gráfico e resumo) -->
+    <string name="participacao_despesas">Participação das despesas por rubrica</string>
+    <string name="sem_despesas_realizadas">Ainda não há despesas realizadas.</string>
+    <string name="despesa_total">Despesa total</string>
+    <string name="receita_total">Receita total</string>
+    <string name="saldo_disponivel">Saldo disponível</string>
+    <string name="resumo_financeiro">Resumo financeiro</string>
+    <string name="tipo_despesa">Tipo de despesa</string>
+    <string name="valor">Valor</string>
+
     <!-- Lançamentos: lista e filtros -->
     <string name="buscar_descricao">Buscar na descrição</string>
     <string name="filtro_periodo">Período</string>

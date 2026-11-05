@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/acao_lancamentos" android:title="@string/lancamentos" app:showAsAction="never" />
+    <item android:id="@+id/acao_rubricas" android:title="@string/rubricas" app:showAsAction="never" />
+    <item android:id="@+id/acao_projeto" android:title="@string/projeto" app:showAsAction="never" />
+    <item android:id="@+id/acao_historico" android:title="@string/historico" app:showAsAction="never" />
+    <item android:id="@+id/acao_relatorio" android:title="@string/download_relatorio" app:showAsAction="never" />
+</menu>

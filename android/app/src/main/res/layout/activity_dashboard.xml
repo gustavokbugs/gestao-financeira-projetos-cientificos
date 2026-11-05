@@ -156,6 +156,65 @@
             android:layout_marginTop="6dp"
             android:textAppearance="?attr/textAppearanceBodyMedium" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/botao_lancamentos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/lancamentos" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/botao_relatorio"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/download_relatorio" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/participacao_despesas"
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+        <br.gestaofinanceira.app.ui.dashboard.GraficoParticipacaoView
+            android:id="@+id/grafico"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" />
+
+        <LinearLayout
+            android:id="@+id/legenda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/sem_despesas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/sem_despesas_realizadas"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/resumo_financeiro"
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+        <TableLayout
+            android:id="@+id/tabela_resumo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:shrinkColumns="1"
+            android:stretchColumns="1" />
+
         <TextView
             android:id="@+id/titulo_alertas"
             android:layout_width="match_parent"
