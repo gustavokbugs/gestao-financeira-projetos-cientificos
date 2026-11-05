@@ -88,4 +88,8 @@ public interface ApiService {
     @GET("projetos/{id}/historico")
     Call<List<Movimentacao>> historico(@Path("id") long projetoId);
 
+    // GP-08: formato=pdf|csv + os mesmos filtros dos lançamentos
+    @Streaming
+    @GET("projetos/{id}/relatorio")
+    Call<ResponseBody> relatorio(@Path("id") long projetoId, @QueryMap Map<String, String> filtros);
 }
