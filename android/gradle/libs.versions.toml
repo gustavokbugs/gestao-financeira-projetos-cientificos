@@ -7,6 +7,7 @@ swiperefreshlayout = "1.2.0"
 retrofit = "3.0.0"
 okhttp = "4.12.0"
 junit = "4.13.2"
+exifinterface = "1.4.1"
 
 [libraries]
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -16,6 +17,7 @@ swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefre
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]
