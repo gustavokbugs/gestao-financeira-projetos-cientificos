@@ -127,6 +127,19 @@
     <string name="lancamento_cancelado">Lançamento cancelado.</string>
     <string name="por_formato">por %1$s</string>
 
+    <!-- Relatórios -->
+    <string name="relatorio_titulo">Exportar relatório</string>
+    <string name="relatorio_com_filtros">com os filtros atuais</string>
+    <string name="relatorio_pdf">Relatório resumido (PDF)</string>
+    <string name="relatorio_planilha">Planilha de lançamentos (CSV, abre no Excel)</string>
+    <string name="gerando_relatorio">Gerando relatório…</string>
+    <string name="relatorio_pronto">Relatório pronto</string>
+    <string name="abrir">Abrir</string>
+    <string name="compartilhar">Compartilhar</string>
+    <string name="fechar">Fechar</string>
+    <string name="sem_app_para_abrir">Nenhum app para abrir este arquivo. Use Compartilhar.</string>
+    <string name="arquivo_indisponivel">Relatório indisponível no servidor.</string>
+
     <!-- Comum -->
     <string name="resposta_invalida">Resposta inesperada do servidor. Tente novamente.</string>
     <string name="tentar_novamente">Tentar novamente</string>
