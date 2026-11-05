@@ -51,4 +51,14 @@ public interface ApiService {
     @GET("projetos/{id}/dashboard")
     Call<Dashboard> dashboard(@Path("id") long projetoId);
 
+    // GP-03
+    @GET("projetos/{id}/rubricas")
+    Call<List<Rubrica>> rubricas(@Path("id") long projetoId);
+
+    @POST("projetos/{id}/rubricas")
+    Call<Rubrica> criarRubrica(@Path("id") long projetoId, @Body RubricaRequest corpo);
+
+    @PUT("rubricas/{id}")
+    Call<Rubrica> editarRubrica(@Path("id") long rubricaId, @Body RubricaRequest corpo);
+
 }
