@@ -101,6 +101,32 @@
     <string name="descartar">Descartar</string>
     <string name="continuar_editando">Continuar editando</string>
 
+    <!-- Lançamento: detalhe -->
+    <string name="aviso_cancelado">Lançamento cancelado: não entra nos totais. Mantido para o histórico.</string>
+    <string name="criado_por">Criado por</string>
+    <string name="atualizado_por">Última alteração</string>
+    <string name="autor_data_formato">%1$s em %2$s</string>
+    <string name="comprovantes">Comprovantes</string>
+    <string name="sem_comprovantes">Nenhum comprovante anexado.</string>
+    <string name="comprovante_info_formato">%1$s · %2$s · %3$s</string>
+    <string name="tirar_foto">Tirar foto</string>
+    <string name="escolher_arquivo">Arquivo</string>
+    <string name="escolher_imagem">Imagem da galeria</string>
+    <string name="escolher_pdf">Documento PDF</string>
+    <string name="agora_nao">Agora não</string>
+    <string name="sem_camera">Nenhum app de câmera disponível.</string>
+    <string name="erro_ler_arquivo">Não foi possível ler o arquivo escolhido.</string>
+    <string name="comprovante_enviado">Comprovante enviado.</string>
+    <string name="erro_envio_formato">Falha ao enviar o comprovante: %1$s</string>
+    <string name="baixando_comprovante">Baixando comprovante…</string>
+    <string name="historico_lancamento">Histórico do lançamento</string>
+    <string name="editar">Editar</string>
+    <string name="cancelar_lancamento">Cancelar lançamento</string>
+    <string name="confirmar_cancelamento_formato">Cancelar \"%1$s\" (%2$s)? O lançamento deixa de contar nos totais, mas continua no histórico.</string>
+    <string name="voltar">Voltar</string>
+    <string name="lancamento_cancelado">Lançamento cancelado.</string>
+    <string name="por_formato">por %1$s</string>
+
     <!-- Comum -->
     <string name="resposta_invalida">Resposta inesperada do servidor. Tente novamente.</string>
     <string name="tentar_novamente">Tentar novamente</string>

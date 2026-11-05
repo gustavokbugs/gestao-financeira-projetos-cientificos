@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/acao_editar"
+        android:icon="@drawable/ic_editar"
+        android:title="@string/editar"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/acao_cancelar_lancamento"
+        android:title="@string/cancelar_lancamento"
+        android:visible="false"
+        app:showAsAction="never" />
+</menu>

@@ -3,6 +3,16 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!--
+        GP-05: a foto é tirada pelo app de câmera do sistema (ACTION_IMAGE_CAPTURE), então não é
+        preciso pedir CAMERA. Esta declaração só torna visível o app de câmera no Android 11+.
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
+
     <application
         android:name=".GestaoFinanceiraApp"
         android:allowBackup="false"
@@ -42,6 +52,11 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.lancamentos.LancamentoDetalheActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:exported="false" />
 
         <!-- Entrega relatórios e comprovantes a outros apps sem permissão de armazenamento (GP-05, GP-08). -->
         <provider
