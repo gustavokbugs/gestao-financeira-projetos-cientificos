@@ -17,14 +17,15 @@ Todas as telas do plano abaixo foram feitas e testadas no emulador (Pixel, API 3
 | CA-02 (registrar/consultar por projeto e rubrica com controle de acesso) | ✅ testado com coordenador e consulta (sem botões de escrita) e com a API recusando por perfil |
 | CA-03 (dashboard, filtros, indisponibilidade de rede) | ✅ API parada → mensagem com "Tentar novamente"; com dados na tela → Snackbar |
 | Conflito de edição (409) | ✅ diálogo "Alterado por outra pessoa" → Recarregar |
-| Testes unitários (E-11/E-13) | ✅ 30 testes JUnit: `Formatos`, `ApiErros`, `Permissoes`, `ValidadorLancamento`, `Filtros`, `TextoMovimentacao` |
+| Testes unitários (E-11/E-13) | ✅ 31 testes JUnit: `Formatos`, `ApiErros`, `Permissoes`, `ValidadorLancamento`, `Filtros`, `TextoMovimentacao` |
+| Testes instrumentados (E-10/E-12) | ✅ 8 testes Espresso com `MockWebServer` (login, perfis, dashboard, validação, rede, sessão expirada) |
+| Compatibilidade (E-14) | ✅ Android 16 (API 36) e Android 8.0 (API 26); tema escuro, fonte grande e rotação. Casos em [testes.md](testes.md) |
 | AAB (E-05) | ✅ `bundleRelease` assinado com `keystore.properties` (fora do git) |
 | Rotação (T-07) | ✅ `configChanges` nas Activities: girar não recria a tela nem perde o que foi digitado |
 
 **Ainda pendente** (depende de fora do código ou ficou fora do escopo):
 
 - Instalar o servidor HTTPS no PC do grupo e trocar `apiUrlRelease` pelo endereço real (tarefa 5.1a); o AAB atual aponta para o endereço de exemplo.
-- Testes instrumentados com Espresso (5.3) e teste no Android 8.0 / API 26 (5.4): só há AVD da API 36 nesta máquina.
 - Capturas de tela em `telas-e-fluxos.md` e homologação com o professor (fase 6).
 
 As seções abaixo são o levantamento original de 03/11/2026, mantido como registro.
