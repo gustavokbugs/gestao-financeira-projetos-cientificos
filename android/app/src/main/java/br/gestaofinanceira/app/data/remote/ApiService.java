@@ -1,30 +1,54 @@
 package br.gestaofinanceira.app.data.remote;
 
 import java.util.List;
+import java.util.Map;
 
+import br.gestaofinanceira.app.data.remote.dto.Comprovante;
 import br.gestaofinanceira.app.data.remote.dto.Dashboard;
+import br.gestaofinanceira.app.data.remote.dto.Lancamento;
+import br.gestaofinanceira.app.data.remote.dto.LancamentoRequest;
 import br.gestaofinanceira.app.data.remote.dto.LoginRequest;
 import br.gestaofinanceira.app.data.remote.dto.LoginResponse;
+import br.gestaofinanceira.app.data.remote.dto.Movimentacao;
+import br.gestaofinanceira.app.data.remote.dto.PaginaLancamentos;
 import br.gestaofinanceira.app.data.remote.dto.Projeto;
+import br.gestaofinanceira.app.data.remote.dto.ProjetoRequest;
+import br.gestaofinanceira.app.data.remote.dto.Rubrica;
+import br.gestaofinanceira.app.data.remote.dto.RubricaRequest;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.QueryMap;
+import retrofit2.http.Streaming;
 
-/**
- * Endpoints consumidos pelo app. Contrato completo em docs/api-endpoints.md;
- * os demais (rubricas, lançamentos, comprovantes, relatórios) entram aqui
- * conforme as telas forem implementadas.
- */
+/** Endpoints consumidos pelo app. Contrato completo em docs/api-endpoints.md. */
 public interface ApiService {
 
+    // GP-01
     @POST("auth/login")
     Call<LoginResponse> login(@Body LoginRequest corpo);
 
+    // GP-01 / GP-02
     @GET("projetos")
     Call<List<Projeto>> listarProjetos();
 
+    @GET("projetos/{id}")
+    Call<Projeto> projeto(@Path("id") long projetoId);
+
+    @POST("projetos")
+    Call<Projeto> criarProjeto(@Body ProjetoRequest corpo);
+
+    @PUT("projetos/{id}")
+    Call<Projeto> editarProjeto(@Path("id") long projetoId, @Body ProjetoRequest corpo);
+
+    // GP-06 / GP-10
     @GET("projetos/{id}/dashboard")
     Call<Dashboard> dashboard(@Path("id") long projetoId);
+
 }
