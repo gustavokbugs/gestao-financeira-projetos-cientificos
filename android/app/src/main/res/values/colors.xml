@@ -11,4 +11,5 @@
     <color name="texto_alerta_atencao">#664D03</color>
     <color name="fundo_alerta_critico">#F8D7DA</color>
     <color name="texto_alerta_critico">#842029</color>
+    <color name="cancelado">#6B6B6B</color>
 </resources>
