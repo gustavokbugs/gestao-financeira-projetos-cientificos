@@ -81,9 +81,24 @@ requisições falham com 503), ou pare a API (`docker compose stop api`), ou ati
 
 ```bash
 cd android
-./gradlew assembleDebug    # APK de teste: app/build/outputs/apk/debug/app-debug.apk
-./gradlew bundleRelease    # AAB: app/build/outputs/bundle/release/ (precisa de keystore de assinatura)
+export JAVA_HOME=~/android-studio/jbr   # se o JDK do sistema não tiver javac (ex.: só o JRE 25)
+./gradlew testDebugUnitTest  # testes unitários (JUnit)
+./gradlew assembleDebug      # APK de teste: app/build/outputs/apk/debug/app-debug.apk
+./gradlew bundleRelease      # AAB: app/build/outputs/bundle/release/app-release.aab
 ```
+
+O AAB é assinado quando existe `android/keystore.properties` (fora do git), apontando para o keystore:
+
+```bash
+keytool -genkeypair -keystore upload.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000
+# android/keystore.properties
+storeFile=upload.jks
+storePassword=...
+keyAlias=upload
+keyPassword=...
+```
+
+Guarde o keystore e as senhas em local seguro: sem eles não dá para publicar atualizações.
 
 O build release só aceita **HTTPS** (`network_security_config`) e usa `apiUrlRelease` de `android/gradle.properties`.
 
