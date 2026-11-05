@@ -37,5 +37,6 @@
     <string name="atualizado_em_formato">Atualizado em %1$s</string>
 
     <!-- Comum -->
+    <string name="resposta_invalida">Resposta inesperada do servidor. Tente novamente.</string>
     <string name="tentar_novamente">Tentar novamente</string>
 </resources>
