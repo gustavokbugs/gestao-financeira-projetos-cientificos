@@ -29,7 +29,9 @@
 
     <TextView
         android:id="@+id/percentual"
-        android:layout_width="56dp"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="12dp"
+        android:minWidth="52dp"
         android:layout_height="wrap_content"
         android:gravity="end"
         android:textAppearance="?attr/textAppearanceLabelLarge" />
