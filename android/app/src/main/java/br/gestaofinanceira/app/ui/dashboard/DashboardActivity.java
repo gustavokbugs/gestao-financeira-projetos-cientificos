@@ -139,6 +139,7 @@ public class DashboardActivity extends AppCompatActivity {
         exibirGrafico(d);
         exibirResumo(d);
         exibirAlertas(d);
+        exibirRegras(d.regrasAlerta);
 
         Map<Long, Double> participacao = new HashMap<>();
         if (d.participacaoPorRubrica != null) {
@@ -240,6 +241,18 @@ public class DashboardActivity extends AppCompatActivity {
             }
             listaAlertas.addView(item);
         }
+    }
+
+    /** GP-10: os limites dos alertas são do servidor; o app só mostra quais estão valendo. */
+    private void exibirRegras(Dashboard.RegrasAlerta regras) {
+        TextView texto = findViewById(R.id.regras_alerta);
+        if (regras == null || regras.atencaoPercentual == null || regras.criticoPercentual == null) {
+            texto.setVisibility(View.GONE);
+            return;
+        }
+        texto.setText(getString(R.string.regras_alerta_formato,
+                Formatos.percentual(regras.atencaoPercentual), Formatos.percentual(regras.criticoPercentual)));
+        texto.setVisibility(View.VISIBLE);
     }
 
     private void falhou(String mensagem) {

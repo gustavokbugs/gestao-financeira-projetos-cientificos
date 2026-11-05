@@ -52,6 +52,7 @@
     <string name="resumo_financeiro">Resumo financeiro</string>
     <string name="tipo_despesa">Tipo de despesa</string>
     <string name="valor">Valor</string>
+    <string name="regras_alerta_formato">Regras do servidor: atenção a partir de %1$s do orçamento comprometido (executado + previsto); saldo insuficiente acima de %2$s.</string>
 
     <!-- Lançamentos: lista e filtros -->
     <string name="buscar_descricao">Buscar na descrição</string>

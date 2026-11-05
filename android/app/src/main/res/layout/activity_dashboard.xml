@@ -238,6 +238,14 @@
             android:text="@string/rubricas"
             android:textAppearance="?attr/textAppearanceTitleMedium" />
 
+        <TextView
+            android:id="@+id/regras_alerta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:visibility="gone" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/lista_rubricas"
             android:layout_width="match_parent"
