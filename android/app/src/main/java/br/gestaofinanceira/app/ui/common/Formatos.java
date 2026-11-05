@@ -57,4 +57,15 @@ public final class Formatos {
                 return papel;
         }
     }
+
+    /** Número no formato brasileiro para campos de edição: 1600.5 → "1.600,50" (sem "R$"). */
+    public static String numeroEditavel(BigDecimal valor, int casas) {
+        if (valor == null) return "";
+        NumberFormat f = NumberFormat.getNumberInstance(PT_BR);
+        f.setMinimumFractionDigits(casas == 3 ? 0 : casas);
+        f.setMaximumFractionDigits(casas);
+        // Sem separador de milhar na quantidade: "1.000" seria lido de volta como 1,000.
+        f.setGroupingUsed(casas != 3);
+        return f.format(valor);
+    }
 }
