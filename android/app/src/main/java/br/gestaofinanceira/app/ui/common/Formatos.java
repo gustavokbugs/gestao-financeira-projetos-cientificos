@@ -1,6 +1,7 @@
 package br.gestaofinanceira.app.ui.common;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -88,5 +89,13 @@ public final class Formatos {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    /** Só para exibição no formulário: o valor oficial é calculado pelo servidor. */
+    public static BigDecimal totalEstimado(BigDecimal quantidade, BigDecimal valorUnitario) {
+        if (quantidade == null || valorUnitario == null) return null;
+        return quantidade.setScale(3, RoundingMode.HALF_UP)
+                .multiply(valorUnitario.setScale(2, RoundingMode.HALF_UP))
+                .setScale(2, RoundingMode.HALF_UP);
     }
 }
