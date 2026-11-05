@@ -68,4 +68,25 @@ public final class Formatos {
         f.setGroupingUsed(casas != 3);
         return f.format(valor);
     }
+
+    /**
+     * Lê um valor digitado em pt-BR: "1.234,56", "1234,56", "R$ 1.234,56" ou "1234.56".
+     * Retorna null se não for um número válido.
+     */
+    public static BigDecimal lerNumero(String texto) {
+        if (texto == null) return null;
+        String s = texto.replace("R$", "").replace("\u00a0", "").replace(" ", "").trim();
+        if (s.isEmpty()) return null;
+        if (s.contains(",")) {
+            s = s.replace(".", "").replace(",", ".");
+        } else if (s.indexOf('.') != s.lastIndexOf('.')) {
+            s = s.replace(".", ""); // "1.234.567" sem vírgula: pontos são milhares
+        }
+        if (!s.matches("-?\\d+(\\.\\d+)?")) return null;
+        try {
+            return new BigDecimal(s);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
 }
