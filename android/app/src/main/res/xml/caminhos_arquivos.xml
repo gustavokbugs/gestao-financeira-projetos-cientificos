@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FileProvider: só a pasta de cache dos relatórios, comprovantes baixados e fotos da câmera. -->
+<paths>
+    <cache-path name="compartilhados" path="compartilhados/" />
+</paths>

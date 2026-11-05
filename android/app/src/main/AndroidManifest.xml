@@ -30,5 +30,16 @@
             android:name=".ui.dashboard.DashboardActivity"
             android:exported="false"
             android:parentActivityName=".ui.projetos.ProjetosActivity" />
+
+        <!-- Entrega relatórios e comprovantes a outros apps sem permissão de armazenamento (GP-05, GP-08). -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.arquivos"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/caminhos_arquivos" />
+        </provider>
     </application>
 </manifest>
