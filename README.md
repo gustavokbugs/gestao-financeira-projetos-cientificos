@@ -125,7 +125,7 @@ Detalhes e critérios de aceite em [docs/requisitos.md](docs/requisitos.md). O q
 - [Requisitos e critérios de aceite](docs/requisitos.md)
 - [**Gaps e plano de implementação**](docs/gaps-e-plano.md) (o que falta e em que ordem)
 - [Arquitetura](docs/arquitetura.md)
-- [Telas e fluxos de navegação](docs/telas-e-fluxos.md)
+- [Telas e fluxos de navegação](docs/telas-e-fluxos.md), com [capturas de tela](docs/telas-e-fluxos.md#capturas-de-tela)
 - [Endpoints consumidos](docs/api-endpoints.md)
 - [Servidor próprio: banco + API em produção](docs/servidor-proprio.md)
 - [Perfis de acesso e permissões do dispositivo](docs/permissoes.md)
