@@ -26,7 +26,7 @@ Todas as telas do plano abaixo foram feitas e testadas no emulador (Pixel, API 3
 **Ainda pendente** (depende de fora do código ou ficou fora do escopo):
 
 - Instalar o servidor HTTPS no PC do grupo e trocar `apiUrlRelease` pelo endereço real (tarefa 5.1a); o AAB atual aponta para o endereço de exemplo.
-- Capturas de tela em `telas-e-fluxos.md` e homologação com o professor (fase 6).
+- Homologação com o professor (fase 6).
 
 As seções abaixo são o levantamento original de 03/11/2026, mantido como registro.
 
